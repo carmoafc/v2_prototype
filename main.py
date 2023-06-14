@@ -3,6 +3,7 @@ import cayenne.client
 import cryptocode
 import credentials
 import time
+import raspFunctions
 
 def checkInternetRequests(url='http://www.google.com/', timeout=3):
     try:
@@ -15,20 +16,22 @@ def checkInternetRequests(url='http://www.google.com/', timeout=3):
 def on_message(message):
     print("message received: " + str(message))
     if message.channel==1:
-        # Todo: Take a photo
-        print('')
+        raspFunctions.takePhotoFCN()
+
     if message.channel==2:
-        # Todo: Take a video
-        print('')
+        raspFunctions.takeVideoFCN()
+
     if message.channel==3:
-        # Todo: Update model
-        print('')
+        raspFunctions.updateModelFCN()
+
     if message.channel==4:
-        # Todo: Calibrate something
-        print('')
+        raspFunctions.calibrateFCN()
+
     if message.channel==5:
-        # Todo: Run model
-        print('')
+        raspFunctions.runModelFCN()
+
+    if message.channel==6:
+        raspFunctions.breakAllFCN()
 
 client = cayenne.client.CayenneMQTTClient()
 client.on_message = on_message
