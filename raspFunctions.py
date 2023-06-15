@@ -46,5 +46,7 @@ def runModelFCN():
         
         print('Predict: ' + typeWater[index])
 
+        time.sleep(2)
+
 def breakAllFCN():
     print('')
