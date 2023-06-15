@@ -10,11 +10,16 @@ def updateModelFCN():
 def calibrateFCN():
     print('')
 
+def on_message(message):
+    print("message received: " + str(message))
+
 def runModelFCN():
     from tflite_runtime.interpreter import Interpreter
     from PIL import Image
     import numpy as np
     import time
+    import cayenne.client
+    import credentials
 
     tflite_model_path = '/home/pi/v2_prototype/Model-_1.tflite'
     interpreter = Interpreter(tflite_model_path)
@@ -26,7 +31,13 @@ def runModelFCN():
 
     typeWater = ['limpa', 'nada', 'suja']
     filename = '/home/pi/v2_prototype/nada_0_18.jpg'
+
+    client = cayenne.client.CayenneMQTTClient()
+    client.on_message = on_message
+    client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
+
     while True:
+        client.loop()
         img = Image.open(filename).convert('RGB') #read the image and convert it to RGB format
         img = img.resize(size) #resize the image to 224x224
         img = np.array(img) # convert the image in an array
@@ -45,6 +56,8 @@ def runModelFCN():
         index = np.argmax(predictions)   
         
         print('Predict: ' + typeWater[index])
+
+        client.virtualWrite(0, int(index))
 
         time.sleep(2)
 
