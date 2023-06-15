@@ -5,7 +5,8 @@ def takeVideoFCN():
     print('')
 
 def updateModelFCN():
-    print('')
+    import os
+    os.system('wget https://github.com/clodoaldocodes/v2_prototype/blob/main/Model-_1.tflite')
 
 def calibrateFCN():
     print('')
