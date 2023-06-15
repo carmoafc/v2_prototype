@@ -25,7 +25,7 @@ def runModelFCN():
     size = input_shape[1:3]
 
     typeWater = ['limpa', 'nada', 'suja']
-    filename = '/home/pi/WATER_IMAGES_IA_RASP/predict.png'
+    filename = '/home/pi/v2_prototype/nada_0_18.jpg'
     while True:
         img = Image.open(filename).convert('RGB') #read the image and convert it to RGB format
         img = img.resize(size) #resize the image to 224x224
