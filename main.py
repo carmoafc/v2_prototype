@@ -42,3 +42,4 @@ while True:
     client.loop()
     if checkInternetRequests:
         time.sleep(2)
+        raspFunctions.runModelFCN()
