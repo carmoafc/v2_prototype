@@ -16,7 +16,7 @@ def runModelFCN():
     import numpy as np
     import time
 
-    tflite_model_path = '/home/pi/WATER_IMAGES_IA_RASP/MODELS/Model.tflite'
+    tflite_model_path = '/home/pi/v2_prototype/Model-_1.tflite'
     interpreter = Interpreter(tflite_model_path)
     interpreter.allocate_tensors()
     input_details = interpreter.get_input_details()
