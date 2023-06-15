@@ -14,6 +14,7 @@ def runModelFCN():
     from tflite_runtime.interpreter import Interpreter
     from PIL import Image
     import numpy as np
+    import time
 
     tflite_model_path = '/home/pi/WATER_IMAGES_IA_RASP/MODELS/Model.tflite'
     interpreter = Interpreter(tflite_model_path)
@@ -23,6 +24,7 @@ def runModelFCN():
     input_shape = input_details[0]['shape']
     size = input_shape[1:3]
 
+    typeWater = ['limpa', 'nada', 'suja']
     filename = '/home/pi/WATER_IMAGES_IA_RASP/predict.png'
     while True:
         img = Image.open(filename).convert('RGB') #read the image and convert it to RGB format
@@ -42,7 +44,7 @@ def runModelFCN():
         predictions = interpreter.get_tensor(output_details[0]['index'])[0]
         index = np.argmax(predictions)   
         
-         print('Predict: ' + typeWater[index])
+        print('Predict: ' + typeWater[index])
 
 def breakAllFCN():
     print('')
