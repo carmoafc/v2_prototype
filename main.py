@@ -41,6 +41,7 @@ def on_message(message):
             if time.time()-initialTime >= duration:
                 break
             time.sleep(0.1)
+        print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Finished')
 
     if message.channel==6:
         global should_stop
