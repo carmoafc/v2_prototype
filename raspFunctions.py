@@ -14,13 +14,17 @@ def calibrateFCN():
 def on_message(message):
     print("message received: " + str(message))
 
-def runModelFCN():
+    if message.channel==6:
+        breakAllFCN()
+
+def runModelFCN(should_stop):
     from tflite_runtime.interpreter import Interpreter
     from PIL import Image
     import numpy as np
     import time
     import cayenne.client
     import credentials
+    import datetime
 
     tflite_model_path = '/home/pi/v2_prototype/Model-_1.tflite'
     interpreter = Interpreter(tflite_model_path)
@@ -37,7 +41,7 @@ def runModelFCN():
     client.on_message = on_message
     client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
 
-    while True:
+    while not should_stop:
         client.loop()
         img = Image.open(filename).convert('RGB') #read the image and convert it to RGB format
         img = img.resize(size) #resize the image to 224x224
@@ -56,11 +60,11 @@ def runModelFCN():
         predictions = interpreter.get_tensor(output_details[0]['index'])[0]
         index = np.argmax(predictions)   
         
-        print('Predict: ' + typeWater[index])
+        print(print(datetime.datetime.now()) ' - Predict: ' + typeWater[index])
 
         client.virtualWrite(0, int(index))
 
         time.sleep(2)
 
-def breakAllFCN():
-    return
+# def breakAllFCN():
+#     return 1

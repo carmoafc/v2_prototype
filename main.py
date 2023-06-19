@@ -14,6 +14,9 @@ def checkInternetRequests(url='http://www.google.com/', timeout=3):
         return False
 
 def on_message(message):
+    import datetime
+
+    print(datetime.datetime.now())
     print("message received: " + str(message))
     if message.channel==1:
         raspFunctions.takePhotoFCN()
@@ -32,7 +35,12 @@ def on_message(message):
 
     if message.channel==6:
         raspFunctions.breakAllFCN()
+    
+    global should_stop
+    if message.channel==6 and message.value==1:
+        should_stop = True
 
+should_stop = False
 client = cayenne.client.CayenneMQTTClient()
 client.on_message = on_message
 client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
@@ -42,4 +50,5 @@ while True:
     client.loop()
     if checkInternetRequests:
         time.sleep(2)
-        raspFunctions.runModelFCN()
+        client.virtualWrite(6, 0)
+        raspFunctions.runModelFCN(should_stop)
