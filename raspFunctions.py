@@ -60,7 +60,7 @@ def runModelFCN(should_stop):
         predictions = interpreter.get_tensor(output_details[0]['index'])[0]
         index = np.argmax(predictions)   
         
-        print(print(datetime.datetime.now()) ' - Predict: ' + typeWater[index])
+        print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]) + ' - Predict: ' + typeWater[index])
 
         client.virtualWrite(0, int(index))
 
