@@ -18,6 +18,7 @@ def on_message(message):
 
     print(datetime.datetime.now())
     print("message received: " + str(message))
+
     if message.channel==1:
         raspFunctions.takePhotoFCN()
 
@@ -31,24 +32,22 @@ def on_message(message):
         raspFunctions.calibrateFCN()
 
     if message.channel==5:
-        raspFunctions.runModelFCN()
+        raspFunctions.runModelFCN(client)
 
     if message.channel==6:
-        raspFunctions.breakAllFCN()
-    
-    global should_stop
-    if message.channel==6 and message.value==1:
+        global should_stop
         should_stop = True
 
 should_stop = False
 client = cayenne.client.CayenneMQTTClient()
 client.on_message = on_message
 client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
+client.virtualWrite(6, 0)
 
 i = 0
 while True:
     client.loop()
-    if checkInternetRequests:
+    if checkInternetRequests and not should_stop:
         time.sleep(2)
-        client.virtualWrite(6, 0)
-        raspFunctions.runModelFCN(should_stop)
+    else:
+        break
