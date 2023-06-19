@@ -4,6 +4,7 @@ import cryptocode
 import credentials
 import time
 import raspFunctions
+import subprocess
 
 def checkInternetRequests(url='http://www.google.com/', timeout=3):
     try:
@@ -50,4 +51,4 @@ while True:
     if checkInternetRequests and not should_stop:
         time.sleep(2)
     else:
-        break
+        raspFunctions.reboot()

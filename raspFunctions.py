@@ -59,3 +59,7 @@ def runModelFCN(client):
 
 # def breakAllFCN():
 #     return 1
+
+def reboot():
+    import subprocess
+    subprocess.call('sudo reboot', shell=True)
