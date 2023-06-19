@@ -16,6 +16,7 @@ def checkInternetRequests(url='http://www.google.com/', timeout=3):
 
 def on_message(message):
     import datetime
+    import time
 
     print(datetime.datetime.now())
     print("message received: " + str(message))
@@ -33,7 +34,13 @@ def on_message(message):
         raspFunctions.calibrateFCN()
 
     if message.channel==5:
-        raspFunctions.runModelFCN(client)
+        duration = 60
+        initialTime = time.time()
+        while True:
+            raspFunctions.runModelFCN(client)
+            if time.time()-initialTime >= duration:
+                break
+            time.sleep(0.1)
 
     if message.channel==6:
         global should_stop
