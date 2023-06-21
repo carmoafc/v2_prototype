@@ -61,4 +61,6 @@ while True:
     if checkInternetRequests and not should_stop:
         time.sleep(2)
     else:
-        raspFunctions.reboot()
+        # raspFunctions.reboot()
+        print('Finished')
+        break
