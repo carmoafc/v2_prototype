@@ -3,8 +3,8 @@ import time
 
 camera = PiCamera()
 
-# camera.start_preview()
-time.sleep(2)
+camera.start_preview()
+time.sleep(20)
 camera.capture('/home/pi/v2_prototype/image.jpg')
-# camera.stop_preview()
+camera.stop_preview()
 print('Finished')
