@@ -83,4 +83,5 @@ def reboot():
     subprocess.call('sudo reboot', shell=True)
 
 def sendEmail():
-    #TODO (developer) - Create a function to send email with the diry result to alert about the problem
+    # TODO (developer) - Create a function to send email with the diry result to alert about the problem
+    print('')
