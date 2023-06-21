@@ -27,7 +27,7 @@ def calibrateFCN():
 def on_message(message):
     print("message received: " + str(message))
 
-def runModelFCN(client):
+def runModelFCN(client, camera):
     from tflite_runtime.interpreter import Interpreter
     from PIL import Image
     import numpy as np
@@ -35,6 +35,7 @@ def runModelFCN(client):
     import cayenne.client
     import credentials
     import datetime
+    from picamera import PiCamera
 
     tflite_model_path = '/home/pi/v2_prototype/Model-_1.tflite'
     interpreter = Interpreter(tflite_model_path)
@@ -45,7 +46,11 @@ def runModelFCN(client):
     size = input_shape[1:3]
 
     typeWater = ['limpa', 'nada', 'suja']
-    filename = '/home/pi/v2_prototype/nada_0_18.jpg'
+
+    time.sleep(1)
+    filename = '/home/pi/v2_prototype/image.jpg'
+
+    camera.capture(filename)
 
     img = Image.open(filename).convert('RGB') #read the image and convert it to RGB format
     img = img.resize(size) #resize the image to 224x224

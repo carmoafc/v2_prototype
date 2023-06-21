@@ -4,7 +4,7 @@ import cryptocode
 import credentials
 import time
 import raspFunctions
-import subprocess
+from picamera import PiCamera
 
 def checkInternetRequests(url='http://www.google.com/', timeout=3):
     try:
@@ -37,7 +37,7 @@ def on_message(message):
         duration = 60
         initialTime = time.time()
         while True:
-            raspFunctions.runModelFCN(client)
+            raspFunctions.runModelFCN(client, camera)
             if time.time()-initialTime >= duration:
                 break
             time.sleep(0.1)
@@ -52,6 +52,8 @@ client = cayenne.client.CayenneMQTTClient()
 client.on_message = on_message
 client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
 client.virtualWrite(6, 0)
+
+camera = PiCamera()
 
 i = 0
 while True:
