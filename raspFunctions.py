@@ -1,8 +1,21 @@
 def takePhotoFCN():
-    print('')
+    from picamera import PiCamera
+    import time
+
+    camera = PiCamera()
+
+    time.sleep(5)
+    camera.capture('/home/pi/v2_prototype/image.jpg')
 
 def takeVideoFCN():
-    print('')
+    from picamera import PiCamera
+    import time
+
+    camera = PiCamera()
+
+    camera.start_recording('/home/pi/v2_prototype/desiredfilename.h264')
+    time.sleep(5)
+    camera.stop_recording()
 
 def updateModelFCN():
     import os
