@@ -81,3 +81,6 @@ def runModelFCN(client, camera):
 def reboot():
     import subprocess
     subprocess.call('sudo reboot', shell=True)
+
+def sendEmail():
+    #TODO (developer) - Create a function to send email with the diry result to alert about the problem
