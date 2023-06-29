@@ -20,14 +20,16 @@ def on_message(message):
     import datetime
     import time
 
+    xCut = yCut = 0
+
     print(datetime.datetime.now())
     print("message received: " + str(message))
 
     if message.channel==1:
-        raspFunctions.takePhotoFCN()
+        raspFunctions.takePhotoFCN(camera)
 
     if message.channel==2:
-        raspFunctions.takeVideoFCN()
+        raspFunctions.takeVideoFCN(camera)
 
     if message.channel==3:
         raspFunctions.updateModelFCN()
@@ -39,28 +41,30 @@ def on_message(message):
         duration = 60
         initialTime = time.time()
         while True:
-            raspFunctions.runModelFCN(client, camera)
+            raspFunctions.runModelFCN(client, camera, xCut, yCut)
             if time.time()-initialTime >= duration:
                 break
             time.sleep(0.1)
         print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Finished')
 
     if message.channel==6:
-        raspFunctions.runModelFCN(client, camera, xCut, yCut)
+        #TODO: Implement the stop part of the code
+        print('')
 
-should_stop = False
+camera = PiCamera()
+
+# should_stop = False
 client = cayenne.client.CayenneMQTTClient()
 client.on_message = on_message
 client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
 client.virtualWrite(6, 0)
 
-camera = PiCamera()
-xCut, yCut = 0
+# and not should_stop
 
 i = 0
 while True:
     client.loop()
-    if checkInternetRequests and not should_stop:
+    if checkInternetRequests:
         time.sleep(2)
     else:
         # raspFunctions.reboot()

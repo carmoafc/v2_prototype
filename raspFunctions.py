@@ -1,18 +1,12 @@
-def takePhotoFCN():
-    from picamera import PiCamera
+def takePhotoFCN(camera):
     import time
-
-    camera = PiCamera()
 
     time.sleep(5)
     camera.capture('/home/pi/v2_prototype/image.jpg')
     return None
 
-def takeVideoFCN():
-    from picamera import PiCamera
+def takeVideoFCN(camera):
     import time
-
-    camera = PiCamera()
 
     camera.start_recording('/home/pi/v2_prototype/desiredfilename.h264')
     time.sleep(5)
@@ -21,7 +15,6 @@ def takeVideoFCN():
 
 def updateModelFCN():
     import os
-    os.remove('/home/pi/v2_prototype/Model-_1.tflite')
     os.system('wget https://github.com/clodoaldocodes/v2_prototype/blob/main/Model-_1.tflite')
     return None
 
@@ -81,7 +74,7 @@ def runModelFCN(client, camera, xCut, yCut):
     img = Image.open(filename).convert('RGB') #read the image and convert it to RGB format
     img = img.resize(size) #resize the image to 224x224
     img = np.array(img) # convert the image in an array
-    if xCut != 0:
+    if xCut[-1] != 0:
         img = img[yCut[0]:yCut[1], xCut[0]:xCut[1]]
 
     processed_image = np.expand_dims(img, axis=0)# Add a batch dimension
