@@ -42,7 +42,7 @@ def on_message(message):
         duration = 60
         initialTime = time.time()
         while True:
-            raspFunctions.runModelFCN(client, camera, xCut, yCut)
+            raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
             if time.time()-initialTime >= duration:
                 break
             time.sleep(0.1)
