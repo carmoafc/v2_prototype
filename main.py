@@ -65,6 +65,7 @@ client.virtualWrite(6, 0, 'digital_sensor', 'd')
 i = 0
 while True:
     client.loop()
+    raspFunctions.obtainTemperature(client)
     if checkInternetRequests and should_stop:
         time.sleep(2)
     else:

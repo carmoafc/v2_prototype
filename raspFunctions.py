@@ -138,3 +138,13 @@ def reboot():
     import subprocess
     subprocess.call('sudo reboot', shell=True)
     return None
+
+def obtainTemperature(client):
+    import subprocess
+
+    output = subprocess.check_output('/opt/vc/bin/vcgencmd measure_temp', shell=True, text=True, stderr=subprocess.PIPE)
+    temperature_str = output.strip().split("=")[1]
+    temperature_float = float(temperature_str.split("'")[0])
+    client.virtualWrite(8, temperature_float)
+
+    return None
