@@ -26,12 +26,34 @@ def updateModelFCN():
     return None
 
 def calibrateFCN():
-    print('')
+    import cv2
+    import os
+    
+    os.remove('/home/pi/v2_prototype/drive_img.png')
+    os.system('wget https://github.com/clodoaldocodes/v2_prototype/blob/main/drive_img.png')
+    image = cv2.imread('/home/pi/v2_prototype/drive_img.png')
+    lower_red = (0, 0, 210)
+    upper_red = (50, 50, 255)
+
+    mask = cv2.inRange(image, lower_red, upper_red)
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        
+        print(cv2.contourArea(contour))
+        if cv2.contourArea(contour) > 0: 
+            cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    
+    xCut = [x, x+w]
+    yCut = [y, y+h]
+    return xCut, yCut
 
 def on_message(message):
     print("message received: " + str(message))
+    return None
 
-def runModelFCN(client, camera):
+def runModelFCN(client, camera, xCut, yCut):
     from tflite_runtime.interpreter import Interpreter
     from PIL import Image
     import numpy as np
@@ -59,6 +81,9 @@ def runModelFCN(client, camera):
     img = Image.open(filename).convert('RGB') #read the image and convert it to RGB format
     img = img.resize(size) #resize the image to 224x224
     img = np.array(img) # convert the image in an array
+    if xCut != 0:
+        img = img[yCut[0]:yCut[1], xCut[0]:xCut[1]]
+
     processed_image = np.expand_dims(img, axis=0)# Add a batch dimension
     processed_image = np.array(processed_image, dtype='float32')
 
@@ -67,9 +92,9 @@ def runModelFCN(client, camera):
     #print(input_details[0]['index'])
     interpreter.set_tensor(input_details[0]['index'], processed_image)
 
-    t1=time.time()
+    # t1=time.time()
     interpreter.invoke()
-    t2=time.time() 
+    # t2=time.time() 
     predictions = interpreter.get_tensor(output_details[0]['index'])[0]
     index = np.argmax(predictions)   
     
