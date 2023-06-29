@@ -56,8 +56,10 @@ def sendEmail(value):
     bodyEmail = \
     '<h1>Water quality alert</h1>' + \
     '<h2>Date: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + \
-    '</h2><p>The water quality in this time is ' + \
-    typeWater[value] + '</p>'
+    '</h2><p>The water quality in this time is <b>' + \
+    typeWater[value] + '</b></p>' + \
+    '<p>Please go to point X and check what is happening.</p>' + \
+    '<p>Any error that may occur send an email to XXXX@gmail.com</p>'
     
     msg = email.message.Message()
     msg['Subject'] = "WATER QUALITY ALERT!!"
@@ -94,7 +96,7 @@ def runModelFCN(client, camera, xCut, yCut):
     input_shape = input_details[0]['shape']
     size = input_shape[1:3]
 
-    typeWater = ['limpa', 'nada', 'suja']
+    typeWater = ['clean', 'nothing', 'dirty']
 
     time.sleep(1)
     filename = '/home/pi/v2_prototype/image.jpg'
@@ -135,3 +137,4 @@ def runModelFCN(client, camera, xCut, yCut):
 def reboot():
     import subprocess
     subprocess.call('sudo reboot', shell=True)
+    return None
