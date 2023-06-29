@@ -45,7 +45,7 @@ def on_message(message):
     print("message received: " + str(message))
     return None
 
-def sendEmail(index):  
+def sendEmail(value):  
     import datetime
     import smtplib
     import email.message
@@ -57,7 +57,7 @@ def sendEmail(index):
     '<h1>Water quality alert</h1>' + \
     '<h2>Date: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + \
     '</h2><p>The water quality in this time is ' + \
-    typeWater[index] + '</p>'
+    typeWater[value] + '</p>'
     
     msg = email.message.Message()
     msg['Subject'] = "WATER QUALITY ALERT!!"
@@ -120,7 +120,7 @@ def runModelFCN(client, camera, xCut, yCut):
     # t2=time.time() 
     predictions = interpreter.get_tensor(output_details[0]['index'])[0]
     index = np.argmax(predictions)  
-    sendEmail(int(index)) 
+    sendEmail(int(index))
     
     print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Predict: ' + typeWater[index])
 
@@ -135,7 +135,3 @@ def runModelFCN(client, camera, xCut, yCut):
 def reboot():
     import subprocess
     subprocess.call('sudo reboot', shell=True)
-
-def sendEmail():
-    # TODO (developer) - Create a function to send email with the diry result to alert about the problem
-    print('')
