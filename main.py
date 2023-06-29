@@ -58,7 +58,7 @@ should_stop = True
 client = cayenne.client.CayenneMQTTClient()
 client.on_message = on_message
 client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
-client.virtualWrite(6, 0)
+client.virtualWrite(6, 0, 'digital_sensor', 'd')
 
 # and not should_stop
 
