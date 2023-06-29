@@ -6,6 +6,8 @@ import time
 import raspFunctions
 from picamera import PiCamera
 
+# /usr/local/bin/python3.7 /home/pi/v2_prototype/main.py
+
 def checkInternetRequests(url='http://www.google.com/', timeout=3):
     try:
         r = requests.head(url, timeout=timeout)

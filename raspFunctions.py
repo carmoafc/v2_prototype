@@ -6,6 +6,7 @@ def takePhotoFCN():
 
     time.sleep(5)
     camera.capture('/home/pi/v2_prototype/image.jpg')
+    return None
 
 def takeVideoFCN():
     from picamera import PiCamera
@@ -16,10 +17,13 @@ def takeVideoFCN():
     camera.start_recording('/home/pi/v2_prototype/desiredfilename.h264')
     time.sleep(5)
     camera.stop_recording()
+    return None
 
 def updateModelFCN():
     import os
+    os.remove('/home/pi/v2_prototype/Model-_1.tflite')
     os.system('wget https://github.com/clodoaldocodes/v2_prototype/blob/main/Model-_1.tflite')
+    return None
 
 def calibrateFCN():
     print('')
@@ -74,6 +78,7 @@ def runModelFCN(client, camera):
     client.virtualWrite(0, int(index))
 
     time.sleep(2)
+    return None
 
 # def breakAllFCN():
 #     return 1
