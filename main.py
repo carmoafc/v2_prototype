@@ -20,7 +20,8 @@ def on_message(message):
     import datetime
     import time
 
-    xCut = yCut = 0
+    xCut = [0, 0]
+    yCut = [0, 0]
 
     print(datetime.datetime.now())
     print("message received: " + str(message))
@@ -48,12 +49,12 @@ def on_message(message):
         print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Finished')
 
     if message.channel==6:
-        #TODO: Implement the stop part of the code
-        print('')
+        global stop_method
+        stop_method = False
 
 camera = PiCamera()
 
-# should_stop = False
+should_stop = True
 client = cayenne.client.CayenneMQTTClient()
 client.on_message = on_message
 client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
@@ -64,9 +65,9 @@ client.virtualWrite(6, 0)
 i = 0
 while True:
     client.loop()
-    if checkInternetRequests:
+    if checkInternetRequests and should_stop:
         time.sleep(2)
     else:
-        # raspFunctions.reboot()
+        raspFunctions.reboot()
         print('Finished')
         break

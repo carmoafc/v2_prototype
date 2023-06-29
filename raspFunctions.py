@@ -15,15 +15,14 @@ def takeVideoFCN(camera):
 
 def updateModelFCN():
     import os
-    os.system('wget https://github.com/clodoaldocodes/v2_prototype/blob/main/Model-_1.tflite')
+    os.system('wget -0 /home/pi/v2_prototype/Model-_1.tflite https://github.com/clodoaldocodes/v2_prototype/blob/main/Model-_1.tflite')
     return None
 
 def calibrateFCN():
     import cv2
     import os
     
-    os.remove('/home/pi/v2_prototype/drive_img.png')
-    os.system('wget https://github.com/clodoaldocodes/v2_prototype/blob/main/drive_img.png')
+    os.system('wget -O /home/pi/v2_prototype/drive_img.png https://github.com/clodoaldocodes/v2_prototype/blob/main/drive_img.png')
     image = cv2.imread('/home/pi/v2_prototype/drive_img.png')
     lower_red = (0, 0, 210)
     upper_red = (50, 50, 255)
@@ -74,7 +73,7 @@ def runModelFCN(client, camera, xCut, yCut):
     img = Image.open(filename).convert('RGB') #read the image and convert it to RGB format
     img = img.resize(size) #resize the image to 224x224
     img = np.array(img) # convert the image in an array
-    if xCut[-1] != 0:
+    if xCut[1] != 0:
         img = img[yCut[0]:yCut[1], xCut[0]:xCut[1]]
 
     processed_image = np.expand_dims(img, axis=0)# Add a batch dimension
