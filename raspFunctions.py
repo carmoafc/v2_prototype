@@ -45,6 +45,37 @@ def on_message(message):
     print("message received: " + str(message))
     return None
 
+def sendEmail(index):  
+    import datetime
+    import smtplib
+    import email.message
+    import credentials
+
+    typeWater = ['clean', 'nothing', 'dirty']
+
+    bodyEmail = \
+    '<h1>Water quality alert</h1>' + \
+    '<h2>Date: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + \
+    '</h2><p>The water quality in this time is ' + \
+    typeWater[index] + '</p>'
+    
+    msg = email.message.Message()
+    msg['Subject'] = "WATER QUALITY ALERT!!"
+    msg['From'] = credentials.email
+    msg['To'] = 'cdsfj@hotmail.com'
+    password = credentials.passwordAPI
+    msg.add_header('Content-Type', 'text/html')
+    msg.set_payload(bodyEmail)
+
+    s = smtplib.SMTP('smtp.gmail.com: 587')
+    s.starttls()
+    # Login Credentials for sending the mail
+    s.login(msg['From'], password)
+    s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
+    print('Email enviado')
+
+    return None
+
 def runModelFCN(client, camera, xCut, yCut):
     from tflite_runtime.interpreter import Interpreter
     from PIL import Image
@@ -88,7 +119,8 @@ def runModelFCN(client, camera, xCut, yCut):
     interpreter.invoke()
     # t2=time.time() 
     predictions = interpreter.get_tensor(output_details[0]['index'])[0]
-    index = np.argmax(predictions)   
+    index = np.argmax(predictions)  
+    sendEmail(int(index)) 
     
     print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Predict: ' + typeWater[index])
 
