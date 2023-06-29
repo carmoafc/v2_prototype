@@ -53,6 +53,7 @@ def on_message(message):
         stop_method = False
 
 camera = PiCamera()
+point = "alpha"
 
 should_stop = True
 client = cayenne.client.CayenneMQTTClient()

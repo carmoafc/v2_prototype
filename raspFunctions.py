@@ -45,7 +45,7 @@ def on_message(message):
     print("message received: " + str(message))
     return None
 
-def sendEmail(value):  
+def sendEmail(value, point):  
     import datetime
     import smtplib
     import email.message
@@ -58,7 +58,7 @@ def sendEmail(value):
     '<h2>Date: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + \
     '</h2><p>The water quality in this time is <b>' + \
     typeWater[value] + '</b></p>' + \
-    '<p>Please go to point X and check what is happening.</p>' + \
+    '<p>Please go to point ' + point + ' and check what is happening.</p>' + \
     '<p>Any error that may occur send an email to XXXX@gmail.com</p>'
     
     msg = email.message.Message()
@@ -78,7 +78,7 @@ def sendEmail(value):
 
     return None
 
-def runModelFCN(client, camera, xCut, yCut):
+def runModelFCN(client, camera, xCut, yCut, point):
     from tflite_runtime.interpreter import Interpreter
     from PIL import Image
     import numpy as np
@@ -122,7 +122,8 @@ def runModelFCN(client, camera, xCut, yCut):
     # t2=time.time() 
     predictions = interpreter.get_tensor(output_details[0]['index'])[0]
     index = np.argmax(predictions)  
-    sendEmail(int(index))
+    if int(index) == 2:
+        sendEmail(int(index), point)
     
     print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Predict: ' + typeWater[index])
 
