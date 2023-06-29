@@ -33,7 +33,7 @@ def on_message(message):
         raspFunctions.updateModelFCN()
 
     if message.channel==4:
-        raspFunctions.calibrateFCN()
+        xCut, yCut = raspFunctions.calibrateFCN()
 
     if message.channel==5:
         duration = 60
@@ -46,8 +46,7 @@ def on_message(message):
         print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Finished')
 
     if message.channel==6:
-        global should_stop
-        should_stop = True
+        raspFunctions.runModelFCN(client, camera, xCut, yCut)
 
 should_stop = False
 client = cayenne.client.CayenneMQTTClient()
@@ -56,6 +55,7 @@ client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.M
 client.virtualWrite(6, 0)
 
 camera = PiCamera()
+xCut, yCut = 0
 
 i = 0
 while True:
