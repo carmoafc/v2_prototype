@@ -49,9 +49,8 @@ def on_message(message):
         print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Finished')
 
     if message.channel==6:
-        global stop_method
-        stop_method = False
-        print(stop_method)
+        global should_stop 
+        should_stop = False
 
 camera = PiCamera()
 point = "alpha"
@@ -64,7 +63,12 @@ client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.M
 # and not should_stop
 
 i = 0
-while should_stop and checkInternetRequests:
+while True:
     client.loop()
     raspFunctions.obtainTemperature(client)
     time.sleep(2)
+    if not (should_stop and checkInternetRequests):
+        raspFunctions.reboot()
+        break
+
+    print(should_stop)
