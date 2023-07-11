@@ -51,25 +51,20 @@ def on_message(message):
     if message.channel==6:
         global stop_method
         stop_method = False
+        print(stop_method)
 
 camera = PiCamera()
 point = "alpha"
-
 should_stop = True
 client = cayenne.client.CayenneMQTTClient()
 client.on_message = on_message
 client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
-client.virtualWrite(6, 0, 'digital_sensor', 'd')
+# client.virtualWrite(6, 0, 'digital_sensor', 'd')
 
 # and not should_stop
 
 i = 0
-while True:
+while should_stop and checkInternetRequests:
     client.loop()
     raspFunctions.obtainTemperature(client)
-    if checkInternetRequests and should_stop:
-        time.sleep(2)
-    else:
-        raspFunctions.reboot()
-        print('Finished')
-        break
+    time.sleep(2)

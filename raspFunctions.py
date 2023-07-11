@@ -59,12 +59,12 @@ def sendEmail(value, point):
     '</h2><p>The water quality in this time is <b>' + \
     typeWater[value] + '</b></p>' + \
     '<p>Please go to point ' + point + ' and check what is happening.</p>' + \
-    '<p>Any error that may occur send an email to XXXX@gmail.com</p>'
+    '<p>Any error that may occur send an email to team@inspectral.com</p>'
     
     msg = email.message.Message()
     msg['Subject'] = "WATER QUALITY ALERT!!"
     msg['From'] = credentials.email
-    msg['To'] = 'cdsfj@hotmail.com'
+    msg['To'] = credentials.email
     password = credentials.passwordAPI
     msg.add_header('Content-Type', 'text/html')
     msg.set_payload(bodyEmail)
