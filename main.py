@@ -38,7 +38,7 @@ def on_message(message):
     if message.channel==4:
         xCut, yCut = raspFunctions.calibrateFCN()
 
-    if message.channel==5:
+    if message.channel==5: 
         duration = 60
         initialTime = time.time()
         while True:

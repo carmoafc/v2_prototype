@@ -15,14 +15,17 @@ def takeVideoFCN(camera):
 
 def updateModelFCN():
     import os
-    os.system('wget -0 /home/pi/v2_prototype/Model-_1.tflite https://github.com/clodoaldocodes/v2_prototype/blob/main/Model-_1.tflite')
+    os.system('rm -f /home/pi/v2_prototype/Model-_1.tflite')
+    os.system('wget https://github.com/clodoaldocodes/v2_prototype/raw/main/Model-_1.tflite -P /home/pi/v2_prototype')
     return None
 
 def calibrateFCN():
     import cv2
     import os
     
-    os.system('wget -O /home/pi/v2_prototype/drive_img.png https://github.com/clodoaldocodes/v2_prototype/blob/main/drive_img.png')
+    os.system('rm -f /home/pi/v2_prototype/drive_img.png')
+    os.system('wget https://github.com/clodoaldocodes/v2_prototype/raw/main/drive_img.png -P /home/pi/v2_prototype')
+
     image = cv2.imread('/home/pi/v2_prototype/drive_img.png')
     lower_red = (0, 0, 210)
     upper_red = (50, 50, 255)
