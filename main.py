@@ -40,11 +40,11 @@ def on_message(message):
 
     if message.channel==5: 
         duration = 60
-        initialTime = time.time()
+        #initialTime = time.time()
         while True:
             raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
-            if time.time()-initialTime >= duration:
-                break
+            #if time.time()-initialTime >= duration:
+            #    break
             time.sleep(0.1)
         print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Finished')
 
@@ -52,6 +52,7 @@ def on_message(message):
         global should_stop 
         should_stop = False
 
+time.sleep(1*60)
 camera = PiCamera()
 point = "alpha"
 should_stop = True
