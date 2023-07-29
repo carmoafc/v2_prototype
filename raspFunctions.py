@@ -49,36 +49,62 @@ def on_message(message):
     return None
 
 def sendEmail(value, point):  
+    import os
     import datetime
     import smtplib
-    import email.message
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    from email.mime.image import MIMEImage
+    from PIL import Image
     import credentials
 
-    typeWater = ['clean', 'nothing', 'dirty']
+    typeWater = ['clean', 'nothing', 'dirty'] 
+    imagePath = '/home/pi/v2_prototype/'  
+    filename = 'image.jpg' 
+
+    imagePath = os.path.join(imagePath, filename)
+
+    maxWidth = 640
+    with Image.open(imagePath) as image:
+        if image.mode == 'RGBA':
+            image = image.convert('RGB')
+        image.thumbnail((maxWidth, maxWidth))
+        tempImagePath = imagePath + 'temp.jpg'
+        image.save(tempImagePath)
 
     bodyEmail = \
-    '<h1>Water quality alert</h1>' + \
-    '<h2>Date: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + \
-    '</h2><p>The water quality in this time is <b>' + \
-    typeWater[value] + '</b></p>' + \
-    '<p>Please go to point ' + point + ' and check what is happening.</p>' + \
-    '<p>Any error that may occur send an email to team@inspectral.com</p>'
-    
-    msg = email.message.Message()
+        '<h1>Water quality alert</h1>' + \
+        '<h2>Date: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + \
+        '</h2><p>The water quality in this time is <b>' + \
+        typeWater[value] + '</b></p>' + \
+        '<p>Please go to point ' + point + ' and check what is happening.</p>' + \
+        '<p>Any error that may occur, send an email to team@inspectral.com</p>' + \
+        '<p>Image that was taken from the region: </p>' + \
+        '<img src="cid:image1">'  
+
+    msg = MIMEMultipart()
     msg['Subject'] = "WATER QUALITY ALERT!!"
     msg['From'] = credentials.email
     msg['To'] = credentials.email
     password = credentials.passwordAPI
-    msg.add_header('Content-Type', 'text/html')
-    msg.set_payload(bodyEmail)
+
+    body = MIMEText(bodyEmail, 'html')
+    msg.attach(body)
+
+    with open(tempImagePath, 'rb') as image_file:
+        image_data = image_file.read()
+    imagePart = MIMEImage(image_data, name=os.path.basename(imagePath))
+    imagePart.add_header('Content-ID', '<image1>')
+    imagePart.add_header("Content-Disposition", "inline", filename=os.path.basename(imagePath))
+    msg.attach(imagePart)
 
     s = smtplib.SMTP('smtp.gmail.com: 587')
     s.starttls()
-    # Login Credentials for sending the mail
     s.login(msg['From'], password)
     s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
-    print('Email enviado')
 
+    os.remove(tempImagePath)
+    print('Email enviado')
     return None
 
 def runModelFCN(client, camera, xCut, yCut, point):
