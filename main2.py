@@ -39,7 +39,8 @@ def on_message(message):
         xCut, yCut = raspFunctions.calibrateFCN()
 
     if message.channel==5: 
-        duration = 60
+        # MODEL RUNNING TIME 
+        # duration = 60
         #initialTime = time.time()
         while True:
             raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
@@ -49,8 +50,8 @@ def on_message(message):
         print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Finished')
 
     if message.channel==6:
-        global should_stop 
-        should_stop = False
+        global shouldStop 
+        shouldStop = False
 
 # Variables to star code and personalize all things
 xCut = [0, 0]
@@ -61,13 +62,10 @@ timeToMeasure = 60*5
 time.sleep(timeToStart)
 camera = PiCamera()
 point = "alpha"
-should_stop = True
+shouldStop = True
 client = cayenne.client.CayenneMQTTClient()
 client.on_message = on_message
 client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
-# client.virtualWrite(6, 0, 'digital_sensor', 'd')
-
-# and not should_stop
 
 i = 0
 while True:
@@ -82,7 +80,7 @@ while True:
     raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
     time.sleep(timeToMeasure)
 
-    if not (should_stop and checkInternetRequests):
+    if not (shouldStop and checkInternetRequests):
         raspFunctions.reboot()
         break
 
@@ -91,4 +89,4 @@ while True:
 
     i = i + 1
 
-    print(should_stop)
+    print(shouldStop)
