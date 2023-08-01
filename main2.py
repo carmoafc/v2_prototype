@@ -54,10 +54,12 @@ def on_message(message):
         shouldStop = False
 
 # Variables to star code and personalize all things
-xCut = [0, 0]
-yCut = [0, 0]
-timeToStart = 60*1
-timeToMeasure = 60*5
+xCut = [0, 256]
+yCut = [0, 256]
+# timeToStart = 60*1
+# timeToMeasure = 60*5
+timeToStart = 1
+timeToMeasure = 2
 
 time.sleep(timeToStart)
 camera = PiCamera()
