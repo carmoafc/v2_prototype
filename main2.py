@@ -20,9 +20,6 @@ def on_message(message):
     import datetime
     import time
 
-    xCut = [0, 0]
-    yCut = [0, 0]
-
     print(datetime.datetime.now())
     print("message received: " + str(message))
 
