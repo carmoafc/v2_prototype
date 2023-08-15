@@ -85,7 +85,7 @@ def sendEmail(value, point):
     msg = MIMEMultipart()
     msg['Subject'] = "WATER QUALITY ALERT!!"
     msg['From'] = credentials.email
-    msg['To'] = credentials.email
+    msg['To'] = credentials.emailTo
     password = credentials.passwordAPI
 
     body = MIMEText(bodyEmail, 'html')

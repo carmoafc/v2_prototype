@@ -6,15 +6,6 @@ import time
 import raspFunctions
 from picamera import PiCamera
 
-# /usr/local/bin/python3.7 /home/pi/v2_prototype/main.py
-
-def checkInternetRequests(url='http://www.google.com/', timeout=3):
-    try:
-        r = requests.head(url, timeout=timeout)
-        return True
-    except requests.ConnectionError as ex:
-        print(ex)
-        return False
 
 def on_message(message):
     import datetime
@@ -50,7 +41,6 @@ def on_message(message):
         global shouldStop 
         shouldStop = False
 
-# Variables to star code and personalize all things
 xCut = [0, 256]
 yCut = [0, 256]
 # timeToStart = 60*1
@@ -66,26 +56,5 @@ client = cayenne.client.CayenneMQTTClient()
 client.on_message = on_message
 client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
 
-i = 0
-while True:
-    client.loop()
-    if i == 0:
-        # TODO: ALL CODES UPDATE (GITHUB WGET)
-        raspFunctions.updateModelFCN()
-        #xCut, yCut = raspFunctions.calibrateFCN()
-
-    raspFunctions.obtainTemperature(client)
-    # TODO: MEASURE OTHER THING WITHING BEING THE TEMPERATURE
-    raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
-    time.sleep(timeToMeasure)
-
-    if not (shouldStop and checkInternetRequests):
-        raspFunctions.reboot()
-        break
-
-    # TODO: IMPLEMENT SOME THING TO ECONOMY ENERGY IN THIS TIME 
-    # AND WAIT THE NEW OPERATION TO PREDICT
-
-    i = i + 1
-
-    print(shouldStop)
+xCut, yCut = raspFunctions.calibrateFCN()
+raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
