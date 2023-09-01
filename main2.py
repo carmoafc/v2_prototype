@@ -5,6 +5,8 @@ import credentials
 import time
 import raspFunctions
 from picamera import PiCamera
+import RPi.GPIO as gpio
+import os
 
 # /usr/local/bin/python3.7 /home/pi/v2_prototype/main.py
 
@@ -55,7 +57,7 @@ xCut = [0, 256]
 yCut = [0, 256]
 # timeToStart = 60*1
 # timeToMeasure = 60*5
-timeToStart = 1
+timeToStart = 60
 timeToMeasure = 2
 
 time.sleep(timeToStart)
@@ -66,26 +68,31 @@ client = cayenne.client.CayenneMQTTClient()
 client.on_message = on_message
 client.begin(credentials.MQTT_USERNAME, credentials.MQTT_PASSWORD, credentials.MQTT_CLIENT_ID, port = 8883)
 
+# gpio.setmode(gpio.BCM)
+# gpio.setup(21, gpio.OUT)
+
 i = 0
-while True:
+while i <= 2:
     client.loop()
     if i == 0:
         # TODO: ALL CODES UPDATE (GITHUB WGET)
         raspFunctions.updateModelFCN()
-        #xCut, yCut = raspFunctions.calibrateFCN()
+    #xCut, yCut = raspFunctions.calibrateFCN()
 
     raspFunctions.obtainTemperature(client)
     # TODO: MEASURE OTHER THING WITHING BEING THE TEMPERATURE
     raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
     time.sleep(timeToMeasure)
 
-    if not (shouldStop and checkInternetRequests):
-        raspFunctions.reboot()
-        break
+    # if not (shouldStop and checkInternetRequests):
+    #     raspFunctions.reboot()
+    #     break
 
     # TODO: IMPLEMENT SOME THING TO ECONOMY ENERGY IN THIS TIME 
     # AND WAIT THE NEW OPERATION TO PREDICT
 
     i = i + 1
 
-    print(shouldStop)
+# gpio.output(21, 1)
+#print('Desligando')
+os.system('sudo shutdown -h now')
