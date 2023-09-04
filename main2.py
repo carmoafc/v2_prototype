@@ -95,4 +95,4 @@ while i <= 2:
 
 # gpio.output(21, 1)
 #print('Desligando')
-# os.system('sudo shutdown -h now')
+os.system('sudo shutdown -h now')
