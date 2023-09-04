@@ -152,7 +152,7 @@ def runModelFCN(client, camera, xCut, yCut, point):
     predictions = interpreter.get_tensor(output_details[0]['index'])[0]
     index = np.argmax(predictions)  
     if int(index) == 2:
-        sendEmail(int(index), point)
+        sendEmail(int(index), point)    
     
     print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Predict: ' + typeWater[index])
 

@@ -57,7 +57,7 @@ xCut = [0, 256]
 yCut = [0, 256]
 # timeToStart = 60*1
 # timeToMeasure = 60*5
-timeToStart = 60
+timeToStart = 30
 timeToMeasure = 2
 
 time.sleep(timeToStart)

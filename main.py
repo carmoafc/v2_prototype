@@ -52,7 +52,7 @@ def on_message(message):
         global should_stop 
         should_stop = False
 
-time.sleep(1*60)
+# time.sleep(1*60)
 camera = PiCamera()
 point = "alpha"
 should_stop = True
