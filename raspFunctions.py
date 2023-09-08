@@ -58,7 +58,7 @@ def sendEmail(value, point):
     from PIL import Image
     import credentials
 
-    typeWater = ['clean', 'nothing', 'dirty'] 
+    typeWater = ['Limpa', 'SemAgua', 'Suja']
     imagePath = '/home/pi/v2_prototype/'  
     filename = 'image.jpg' 
 
@@ -73,17 +73,17 @@ def sendEmail(value, point):
         image.save(tempImagePath)
 
     bodyEmail = \
-        '<h1>Water quality alert</h1>' + \
-        '<h2>Date: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + \
-        '</h2><p>The water quality in this time is <b>' + \
+        '<h1>Alerta do protótipo </h1>' + \
+        '<h2>Hora: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + \
+        '</h2><p>A água foi classificada como <b>' + \
         typeWater[value] + '</b></p>' + \
-        '<p>Please go to point ' + point + ' and check what is happening.</p>' + \
-        '<p>Any error that may occur, send an email to team@inspectral.com</p>' + \
-        '<p>Image that was taken from the region: </p>' + \
+        '<p>Se dirija ao ponto ' + point + ' e verifique o que está acontecendo.</p>' + \
+        '<p>Qualquer erro que venha a ocorrer, entre em contato com team@inspectral.com</p>' + \
+        '<p>Imagem que foi obtida da região observada: </p>' + \
         '<img src="cid:image1">'  
 
     msg = MIMEMultipart()
-    msg['Subject'] = "WATER QUALITY ALERT!!"
+    msg['Subject'] = "ALERTA DO PROTÓTIPO!!"
     msg['From'] = credentials.email
     msg['To'] = credentials.emailTo
     password = credentials.passwordAPI
@@ -112,8 +112,6 @@ def runModelFCN(client, camera, xCut, yCut, point):
     from PIL import Image
     import numpy as np
     import time
-    import cayenne.client
-    import credentials
     import datetime
     from picamera import PiCamera
 
@@ -125,7 +123,7 @@ def runModelFCN(client, camera, xCut, yCut, point):
     input_shape = input_details[0]['shape']
     size = input_shape[1:3]
 
-    typeWater = ['clean', 'nothing', 'dirty']
+    typeWater = ['Limpa', 'SemAgua', 'Suja']
 
     time.sleep(1)
     filename = '/home/pi/v2_prototype/image.jpg'
@@ -156,7 +154,12 @@ def runModelFCN(client, camera, xCut, yCut, point):
     
     print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Predict: ' + typeWater[index])
 
-    client.virtualWrite(0, int(index))
+    data = {
+            'variable': 'estadoagua',                                                  
+            'value'   : typeWater[index],                                                                    
+    }
+
+    client.insert(data)
 
     time.sleep(2)
     return None
@@ -172,7 +175,13 @@ def obtainTemperature(client):
     output = subprocess.check_output('/usr/bin/vcgencmd measure_temp', shell=True, text=True, stderr=subprocess.PIPE)
     temperature_str = output.strip().split("=")[1]
     temperature_float = float(temperature_str.split("'")[0])
-    client.virtualWrite(8, temperature_float)
+    data = {
+            'variable': 'temperatura',                                                  
+            'value'   : str(temperature_float),
+            'unit'    : 'ºC'                                                                    
+    }
+
+    client.insert(data)
 
     return None
 
