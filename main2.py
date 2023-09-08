@@ -5,7 +5,6 @@ import credentials
 import time
 import raspFunctions
 from picamera import PiCamera
-from gpiozero import DigitalInputDevice
 import os
 
 def checkInternetRequests(url='http://www.google.com/', timeout=3):
@@ -19,7 +18,7 @@ def checkInternetRequests(url='http://www.google.com/', timeout=3):
 # Variables to star code and personalize all things
 xCut = [0, 256]
 yCut = [0, 256]
-timeToStart = 30
+timeToStart = 0
 timeToMeasure = 2
 
 time.sleep(timeToStart)
@@ -56,4 +55,5 @@ while i <= 2:
 
     i = i + 1
 
+time.sleep(1)
 os.system('sudo shutdown -h now')
