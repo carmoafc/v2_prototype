@@ -161,9 +161,6 @@ def runModelFCN(client, camera, xCut, yCut, point):
     time.sleep(2)
     return None
 
-# def breakAllFCN():
-#     return 1
-
 def reboot():
     import subprocess
     subprocess.call('sudo reboot', shell=True)
@@ -178,3 +175,6 @@ def obtainTemperature(client):
     client.virtualWrite(8, temperature_float)
 
     return None
+
+def sendMensage(client, channel, value):
+    client.virtualWrite(channel, value)
