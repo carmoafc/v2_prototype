@@ -56,4 +56,4 @@ while i <= 2:
 
     i = i + 1
 
-#os.system('sudo shutdown -h now')
+os.system('sudo shutdown -h now')
