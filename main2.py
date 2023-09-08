@@ -55,5 +55,4 @@ while i <= 2:
 
     i = i + 1
 
-time.sleep(1)
 os.system('sudo shutdown -h now')
