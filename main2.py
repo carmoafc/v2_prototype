@@ -18,7 +18,7 @@ def checkInternetRequests(url='http://www.google.com/', timeout=3):
 # Variables to star code and personalize all things
 xCut = [0, 256]
 yCut = [0, 256]
-timeToStart = 0
+timeToStart = 30
 timeToMeasure = 2
 
 time.sleep(timeToStart)
