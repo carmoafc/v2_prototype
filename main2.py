@@ -6,6 +6,7 @@ import time
 import raspFunctions
 from picamera import PiCamera
 import os
+import serial
 
 def checkInternetRequests(url='http://www.google.com/', timeout=3):
     try:
@@ -18,19 +19,33 @@ def checkInternetRequests(url='http://www.google.com/', timeout=3):
 # Variables to star code and personalize all things
 xCut = [0, 256]
 yCut = [0, 256]
-timeToStart = 30
+timeToStart = 0
 timeToMeasure = 2
 
 time.sleep(timeToStart)
-camera = PiCamera()
 point = "alpha"
 shouldStop = True
+
+while checkInternetRequests == False:
+    time.sleep(timeToMeasure)
+
+ser = serial.Serial('/dev/ttyUSB0',9600)
+
 client = tago.Device(credentials.tagoToken)
-filename = 'number.txt'
+filename = '/home/pi/v2_prototype/number.txt'
 
 i = 0
-while i <= 2:
-    if i == 0:
+while i <= 0:
+    s = ser.readline()
+    print(str(s[2:4]))
+    if(str(s[2:4]) == 'ON'):
+        with open(filename, 'w') as file:
+            file.write(str(0))
+            battery = 100-((0*100)/1600)
+            print('A')
+
+    else:
+        print('B')
         #raspFunctions.updateModelFCN()
         with open(filename, 'r') as file:
             number = int(file.read())
@@ -41,18 +56,20 @@ while i <= 2:
             file.write(str(number))
             battery = 100-((number*100)/1600)
 
-        data = {
-            'variable': 'bateria',
-            'value': str(battery),
-            'unit': '%'
-        }
+    data = {
+        'variable': 'bateria',
+        'value': str(battery),
+        'unit': '%'
+    }
 
-        client.insert(data)
+    client.insert(data)
 
     raspFunctions.obtainTemperature(client)
+    camera = PiCamera()
     raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
-    time.sleep(timeToMeasure)
+    camera.close()
+    #time.sleep(timeToMeasure)
 
     i = i + 1
 
-os.system('sudo shutdown -h now')
+#os.system('sudo shutdown -h now')
