@@ -42,7 +42,7 @@ GPIO.output(20, GPIO.LOW)
 
 i = 0
 while i <= 0:
-    if GPIO.input(21) == True:
+    if GPIO.input(21) == False:
         #raspFunctions.updateModelFCN()
         with open(filename, 'r') as file:
             number = int(file.read())
@@ -52,10 +52,13 @@ while i <= 0:
         with open(filename, 'w') as file:
             file.write(str(number))
             battery = 100-((number*100)/1600)
+
+            print('A')
     else:
         with open(filename, 'w') as file:
             file.write(str(0))
             battery = 100-((0*100)/1600)
+            print('B')
 
     data = {
         'variable': 'bateria',
@@ -70,7 +73,7 @@ while i <= 0:
     raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
     camera.close()
     GPIO.output(20, GPIO.HIGH)
-    time.sleep(2)
+    time.sleep(1)
 
     i = i + 1
 
