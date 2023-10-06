@@ -32,15 +32,23 @@ time.sleep(timeToStart)
 point = "alpha"
 shouldStop = True
 
+time_begin = time.time()
+time_const = 120
+i = 0
+
 while checkInternetRequests() == False:  # Wait for internet connection
     time.sleep(timeToMeasure)
+    time_passed = time.time() - time_begin
+
+    if time_passed >= time_const:
+        i = 2
+        break
 
 # Tago.io setup
 client = tago.Device(credentials.tagoToken)
 filename = '/home/pi/v2_prototype/number.txt'
 GPIO.output(20, GPIO.LOW)
 
-i = 0
 while i <= 0:
     if GPIO.input(21) == False:
         #raspFunctions.updateModelFCN()
@@ -53,12 +61,12 @@ while i <= 0:
             file.write(str(number))
             battery = 100-((number*100)/1600)
 
-            print('A')
+            #print('A')
     else:
         with open(filename, 'w') as file:
             file.write(str(0))
             battery = 100-((0*100)/1600)
-            print('B')
+            #print('B')
 
     data = {
         'variable': 'bateria',
@@ -72,10 +80,11 @@ while i <= 0:
     camera = PiCamera()
     raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
     camera.close()
-    GPIO.output(20, GPIO.HIGH)
-    time.sleep(1)
 
     i = i + 1
+
+GPIO.output(20, GPIO.HIGH)
+time.sleep(1)
 
 #os.system('sudo shutdown -h now')
 GPIO.cleanup()
