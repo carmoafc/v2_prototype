@@ -68,6 +68,9 @@ while i <= 0:
             battery = 100-((0*100)/1600)
             #print('B')
 
+            os.system("rm -f /home/pi/v2_prototype/Model-_1.tflite")
+            os.system("wget https://github.com/clodoaldocodes/v2_prototype/blob/main/Model-_1.tflite -P /home/pi/v2_prototype/")
+
     data = {
         'variable': 'bateria',
         'value': str(battery),
@@ -86,5 +89,5 @@ while i <= 0:
 GPIO.output(20, GPIO.HIGH)
 time.sleep(1)
 
-os.system('sudo shutdown -h now')
+#os.system('sudo shutdown -h now')
 GPIO.cleanup()
