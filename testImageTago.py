@@ -2,8 +2,8 @@ from tago import Device
 import base64
 
 # Substitua com suas credenciais e informações do dispositivo no Tago
-TAGO_TOKEN = 'd0064505-d433-4d6f-a676-79233141f249'
-DEVICE_ID = '64fb28b4801f850010f7a311'  # Substitua pelo ID real do seu dispositivo
+TAGO_TOKEN = '40dd5782-129e-4b79-b9f9-5d8ec126f42f'
+DEVICE_ID = 'd0064505-d433-4d6f-a676-79233141f249'  # Substitua pelo ID real do seu dispositivo
 
 # Caminho da imagem que você deseja enviar
 image_path = "D:/v2_prototype/A_small_cup_of_coffee.JPG"
