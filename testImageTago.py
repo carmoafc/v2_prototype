@@ -31,7 +31,7 @@ def send_image_to_tago(image_path):
     }
 
     # Enviar os dados para o Tago.io usando a biblioteca requests
-    response = requests.put(url_with_bucket_id, json=data, headers=headers)
+    response = requests.post(url_with_bucket_id, json=data, headers=headers)
 
     # Verificar se os dados foram enviados com sucesso
     if response.status_code == 200:
