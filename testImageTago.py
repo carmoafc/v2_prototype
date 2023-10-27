@@ -1,31 +1,55 @@
+import requests
 import base64
-from tago import Device
 
-# Substitua com suas credenciais e informações do dispositivo no Tago
-DASHBOARD_TOKEN = '40dd5782-129e-4b79-b9f9-5d8ec126f42f'
-DEVICE_ID = 'd0064505-d433-4d6f-a676-79233141f249'  # Substitua pelo ID real do seu dispositivo
+# Substitua 'YOUR_TOKEN' pelo seu token de autenticação do Tago.io
+TOKEN = 'd0064505-d433-4d6f-a676-79233141f249'
 
-# Caminho da imagem que você deseja enviar
-image_path = 'D:/v2_prototype/A_small_cup_of_coffee.JPG'
+# Substitua 'YOUR_BUCKET_ID' pelo ID do seu bucket no Tago.io
+BUCKET_ID = '64fb28e187a3330009e9937f'
 
-# Função para converter uma imagem em Base64
-def image_to_base64(file_path):
-    with open(file_path, 'rb') as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
+# URL de envio de dados para o Tago.io
+TAGO_API_URL = f'https://api.tago.io/data/{BUCKET_ID}'
 
-# Convertendo a imagem em Base64
-image_base64 = image_to_base64(image_path)
+def send_image_to_tago(image_path):
+    with open(image_path, 'rb') as image_file:
+        # Codificar a imagem em base64
+        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
 
-# Criando um objeto Data com os dados da imagem
-data = {
-    'variable': 'image_data',
-    'value': image_base64,
-}
+    # Configurar os dados que você deseja enviar para o Tago.io
+    data = {
+        'variable': 'image',
+        'value': encoded_image,
+        'tag': 'imagem_tag',
+        'bucket': BUCKET_ID
+    }
 
-# Inicializando a instância do Device com o token do dispositivo
-tago_device = Device(DEVICE_ID)
+    headers = {
+        'Content-Type': 'application/json',
+        'Device-Token': TOKEN
+    }
 
-# Enviando dados para o Tago
-tago_device.insert(data)
+    # Enviar os dados para o Tago.io usando a biblioteca requests
+    # Antes da solicitação
+    print('URL da solicitação:', TAGO_API_URL)
 
-print('Dados enviados com sucesso para o Dashboard no Tago.')
+    # Solicitação
+    response = requests.post(TAGO_API_URL, json=data, headers=headers)
+
+    # Após a solicitação
+    print('Resposta:', response.text)
+
+
+    # Verificar se os dados foram enviados com sucesso
+    if response.status_code == 200:
+        print('Imagem enviada com sucesso!')
+    else:
+        print('Erro ao enviar a imagem:', response.text)
+
+def main():
+    # Substitua 'caminho/para/sua/imagem.jpg' pelo caminho correto para o seu arquivo de imagem
+    image_path = 'D:/v2_prototype/A_small_cup_of_coffee.JPG'
+    
+    send_image_to_tago(image_path)
+
+if __name__ == '__main__':
+    main()
