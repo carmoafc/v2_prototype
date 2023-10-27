@@ -7,8 +7,8 @@ TOKEN = 'd0064505-d433-4d6f-a676-79233141f249'
 # Substitua 'YOUR_BUCKET_ID' pelo ID do seu bucket no Tago.io
 BUCKET_ID = '64fb28e187a3330009e9937f'
 
-# URL de envio de dados para o Tago.io
-TAGO_API_URL = f'https://api.tago.io/data/{BUCKET_ID}'
+# URL base de envio de dados para o Tago.io
+TAGO_API_URL = 'https://api.tago.io/data'
 
 def send_image_to_tago(image_path):
     with open(image_path, 'rb') as image_file:
@@ -20,24 +20,18 @@ def send_image_to_tago(image_path):
         'variable': 'image',
         'value': encoded_image,
         'tag': 'imagem_tag',
-        'bucket': BUCKET_ID
     }
+
+    # Adicionar o bucket_id como parte da URL
+    url_with_bucket_id = f'{TAGO_API_URL}/{BUCKET_ID}'
 
     headers = {
         'Content-Type': 'application/json',
-        'Device-Token': TOKEN
+        'Device-Token': TOKEN,
     }
 
     # Enviar os dados para o Tago.io usando a biblioteca requests
-    # Antes da solicitação
-    print('URL da solicitação:', TAGO_API_URL)
-
-    # Solicitação
-    response = requests.post(TAGO_API_URL, json=data, headers=headers)
-
-    # Após a solicitação
-    print('Resposta:', response.text)
-
+    response = requests.put(url_with_bucket_id, json=data, headers=headers)
 
     # Verificar se os dados foram enviados com sucesso
     if response.status_code == 200:
