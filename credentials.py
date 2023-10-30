@@ -5,5 +5,5 @@ MQTT_CLIENT_ID = "41786540-0ae2-11ee-8485-5b7d3ef089d0"
 email = "aegeaprototipo@gmail.com"
 emailTo = ", ".join(["aegeaprototipo@gmail.com", "cdsfj@hotmail.com"])
 passwordAPI = "uccfmhcavnwcnncz"
-tagoToken = "5a6f3079-c251-4b5b-aeee-87ad36e5c420"
+tagoToken = "d0064505-d433-4d6f-a676-79233141f249"
 deviceToker = "d0064505-d433-4d6f-a676-79233141f249"
