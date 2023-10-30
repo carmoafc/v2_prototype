@@ -187,3 +187,36 @@ def obtainTemperature(client):
 
 def sendMensage(client, channel, value):
     client.virtualWrite(channel, value)
+
+def download_git():
+    import os
+    import requests
+
+    # Caminho local do arquivo
+    caminho_local = '/home/pi/v2_prototype/Model-_1.tflite'
+
+    # Remover o arquivo existente, se houver
+    if os.path.exists(caminho_local):
+        os.remove(caminho_local)
+        print(f"Arquivo existente removido: {caminho_local}")
+
+    # URL do arquivo no GitHub
+    url_arquivo_github = 'https://github.com/clodoaldocodes/v2_prototype/raw/main/Model-_1.tflite'
+
+    # Baixar o arquivo
+    try:
+        resposta = requests.get(url_arquivo_github)
+        resposta.raise_for_status()  # Verificar se houve um erro na solicitação
+
+        # Verificar se o conteúdo é válido
+        if 'Model provided has model identifier' in resposta.text:
+            print("Erro: O arquivo baixado parece conter um erro. Verifique o conteúdo do arquivo no GitHub.")
+        else:
+            # Salvar o conteúdo do arquivo
+            with open(caminho_local, 'wb') as arquivo_local:
+                arquivo_local.write(resposta.content)
+
+            print(f"Arquivo baixado com sucesso para: {caminho_local}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Erro ao baixar o arquivo: {e}")

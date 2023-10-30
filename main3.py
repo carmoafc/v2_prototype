@@ -94,8 +94,7 @@ if(iteration > last_curr):#alway TRUE, else error
     camera.close()
     #time.sleep(timeToMeasure)
 
-    write_serial_string(ser, "SHUT")
-    #os.system('sudo shutdown -h now')
+    #write_serial_string(ser, "SHUT")
     
 
 else:
