@@ -13,7 +13,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(21, GPIO.IN)
 GPIO.setup(20, GPIO.OUT)
 
-def checkInternetRequests(url='http://www.google.com/', timeout=3):
+def checkInternetRequests(url="http://www.google.com/", timeout=3):
     try:
         # Check if internet connection is available by sending a HEAD request to Google
         r = requests.head(url, timeout=timeout)
@@ -46,33 +46,33 @@ while checkInternetRequests() == False:  # Wait for internet connection
 
 # Tago.io setup
 client = tago.Device(credentials.tagoToken)
-filename = '/home/pi/v2_prototype/number.txt'
+filename = "/home/pi/v2_prototype/number.txt"
 GPIO.output(20, GPIO.LOW)
 
 while i <= 0:
     if GPIO.input(21) == False:
         #raspFunctions.updateModelFCN()
-        with open(filename, 'r') as file:
+        with open(filename, "r") as file:
             number = int(file.read())
 
         number += 1
 
-        with open(filename, 'w') as file:
+        with open(filename, "w") as file:
             file.write(str(number))
             battery = 100-((number*100)/1600)
 
-            #print('A')
+            #print("A")
     else:
-        with open(filename, 'w') as file:
+        with open(filename, "w") as file:
             file.write(str(0))
             battery = 100-((0*100)/1600)
-            #print('B')
+            #print("B")
 
             raspFunctions.download_git()
     data = {
-        'variable': 'bateria',
-        'value': str(battery),
-        'unit': '%'
+        "variable": "bateria",
+        "value": str(battery),
+        "unit": "%"
     }
 
     client.insert(data)
@@ -87,5 +87,5 @@ while i <= 0:
 GPIO.output(20, GPIO.HIGH)
 time.sleep(1)
 
-#os.system('sudo shutdown -h now')
+#os.system("sudo shutdown -h now")
 GPIO.cleanup()
