@@ -87,5 +87,5 @@ while i <= 0:
 GPIO.output(20, GPIO.HIGH)
 time.sleep(1)
 
-#os.system("sudo shutdown -h now")
+os.system("sudo shutdown -h now")
 GPIO.cleanup()
