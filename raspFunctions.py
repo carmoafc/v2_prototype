@@ -259,7 +259,12 @@ def compare_and_replace_date(file_name='/home/pi/v2_prototype/data.txt'):
         print("The current date is not greater than the existing date in the file.")
         return False
 
-def send_report(textFilePath="/home/pi/v2_prototype/data_send.txt"):
+def send_report(client, textFilePath):
+
+    data = client.data.find({'variable': "email"}, qty=1)
+    last_value = data[0]["value"]
+    print(last_value)
+
     bodyEmail = \
         '<h1>Relatório das medições:  </h1>' + \
         '<p> </p>' + \
@@ -273,7 +278,7 @@ def send_report(textFilePath="/home/pi/v2_prototype/data_send.txt"):
     name_email = "RELATÓRIO - PROTÓTIPO - " + str_date
     msg['Subject'] = name_email
     msg['From'] = credentials.email
-    msg['To'] = credentials.emailTo
+    msg['To'] = last_value
     password = credentials.passwordAPI
 
     body = MIMEText(bodyEmail, 'html')
