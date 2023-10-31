@@ -7,6 +7,7 @@ from picamera import PiCamera
 import serial
 import os
 import RPi.GPIO as GPIO
+import datetime
 
 # Configurar o pino GPIO 21 para entrada
 GPIO.setmode(GPIO.BCM)
@@ -47,6 +48,7 @@ while checkInternetRequests() == False:  # Wait for internet connection
 # Tago.io setup
 client = tago.Device(credentials.tagoToken)
 filename = "/home/pi/v2_prototype/number.txt"
+filename_send = "/home/pi/v2_prototype/data_send.txt"
 GPIO.output(20, GPIO.LOW)
 
 while i <= 0:
@@ -62,6 +64,7 @@ while i <= 0:
             battery = 100-((number*100)/1600)
 
             #print("A")
+
     else:
         with open(filename, "w") as file:
             file.write(str(0))
@@ -79,13 +82,26 @@ while i <= 0:
 
     raspFunctions.obtainTemperature(client)
     camera = PiCamera()
-    raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
+    index = raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
     camera.close()
+
+    result = raspFunctions.compare_and_replace_date()
+
+    current_date = datetime.datetime.now()
+    str_date = current_date.strftime("%Y-%m-%d %H:%M")
+    if result:
+        with open(filename_send, "a") as file:
+            file.write(str_date + " - " + index + "\n")
+    else:
+        raspFunctions.send_report()
+
+        with open(filename_send, "w") as file:
+            file.write(str_date + " - " + index + "\n")
 
     i = i + 1
 
-GPIO.output(20, GPIO.HIGH)
+#GPIO.output(20, GPIO.HIGH)
 time.sleep(1)
 
-os.system("sudo shutdown -h now")
+#os.system("sudo shutdown -h now")
 GPIO.cleanup()

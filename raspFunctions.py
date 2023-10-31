@@ -1,3 +1,13 @@
+import os
+import os
+import datetime
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+import credentials
+
 def takePhotoFCN(camera):
     import time
 
@@ -50,7 +60,6 @@ def on_message(message):
 
 def sendEmail(value, point):  
     import os
-    import datetime
     import smtplib
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
@@ -112,7 +121,6 @@ def runModelFCN(client, camera, xCut, yCut, point):
     from PIL import Image
     import numpy as np
     import time
-    import datetime
     from picamera import PiCamera
 
     tflite_model_path = '/home/pi/v2_prototype/Model-_1.tflite'
@@ -162,7 +170,7 @@ def runModelFCN(client, camera, xCut, yCut, point):
     client.insert(data)
 
     time.sleep(2)
-    return None
+    return typeWater[index]
 
 def reboot():
     import subprocess
@@ -220,3 +228,67 @@ def download_git():
 
     except requests.exceptions.RequestException as e:
         print(f"Erro ao baixar o arquivo: {e}")
+
+def write_date_to_file(date, file_name='/home/pi/v2_prototype/data.txt'):
+    with open(file_name, 'w') as file:
+        file.write(date)
+
+def read_date_from_file(file_name='/home/pi/v2_prototype/data.txt'):
+    if os.path.exists(file_name):
+        with open(file_name, 'r') as file:
+            date_str = file.read().strip()
+            try:
+                date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+                return date
+            except ValueError:
+                print("Invalid date format in the file.")
+                return None
+    else:
+        print(f"The file {file_name} does not exist.")
+        return None
+
+def compare_and_replace_date(file_name='/home/pi/v2_prototype/data.txt'):
+    current_date = datetime.datetime.now()
+    previous_date = read_date_from_file(file_name)
+    
+    if previous_date is None or current_date > previous_date:
+        write_date_to_file(current_date.strftime('%Y-%m-%d'), file_name)
+        print("Date replaced successfully.")
+        return True
+    else:
+        print("The current date is not greater than the existing date in the file.")
+        return False
+
+def send_report(textFilePath="/home/pi/v2_prototype/data_send.txt"):
+    bodyEmail = \
+        '<h1>Relatório das medições:  </h1>' + \
+        '<p> </p>' + \
+        '<pre>' + open(textFilePath).read() + '</pre>'
+
+    msg = MIMEMultipart()
+
+    current_date = datetime.datetime.now()
+    str_date = current_date.strftime("%Y-%m-%d")
+
+    name_email = "RELATÓRIO - PROTÓTIPO - " + str_date
+    msg['Subject'] = name_email
+    msg['From'] = credentials.email
+    msg['To'] = credentials.emailTo
+    password = credentials.passwordAPI
+
+    body = MIMEText(bodyEmail, 'html')
+    msg.attach(body)
+
+    with open(textFilePath, 'rb') as text_file:
+        attachment = MIMEBase('application', 'octet-stream')
+        attachment.set_payload(text_file.read())
+        encoders.encode_base64(attachment)
+        attachment.add_header('Content-Disposition', 'attachment', filename=textFilePath)
+        msg.attach(attachment)
+
+    s = smtplib.SMTP('smtp.gmail.com: 587')
+    s.starttls()
+    s.login(msg['From'], password)
+    s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
+
+    print('Email enviado')
