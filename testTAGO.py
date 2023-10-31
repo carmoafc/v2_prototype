@@ -1,18 +1,20 @@
 import tago
 import credentials
-import ast
+import json
 
 # Cria uma instância do dispositivo Tago
 device = tago.Device(credentials.tagoToken)
 
-# Recupera os últimos valores da variável
-json_data = device.find({'variable': "email"})
+filter = {
+'variable': 'email',
+'query': 'last_value',
+'end_date': '2023-12-25 23:33:22',
+'start_date': '2014-12-20 23:33:22'
+}
 
-# Converte a string para um dicionário Python usando ast.literal_eval
-data_dict = ast.literal_eval(json_data)
+result = device.find(filter)
+print(result)
 
-# Obtém o primeiro e-mail recebido
-primeiro_email = data_dict['result'][0]['value']
+valor_result = result.get('result')
 
-# Imprime o primeiro e-mail
-print(f"O primeiro e-mail recebido é: {primeiro_email}")
+print(valor_result)
