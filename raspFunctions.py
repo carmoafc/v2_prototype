@@ -7,6 +7,7 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 import credentials
+import numpy as np
 
 def takePhotoFCN(camera):
     import time
@@ -229,11 +230,11 @@ def download_git():
     except requests.exceptions.RequestException as e:
         print(f"Erro ao baixar o arquivo: {e}")
 
-def write_date_to_file(date, file_name='/home/pi/v2_prototype/data.txt'):
+def write_date_to_file(date, file_name="/home/pi/v2_prototype/data_send.txt"):
     with open(file_name, 'w') as file:
         file.write(date)
 
-def read_date_from_file(file_name='/home/pi/v2_prototype/data.txt'):
+def read_date_from_file(file_name="/home/pi/v2_prototype/data_send.txt"):
     if os.path.exists(file_name):
         with open(file_name, 'r') as file:
             date_str = file.read().strip()
@@ -247,7 +248,7 @@ def read_date_from_file(file_name='/home/pi/v2_prototype/data.txt'):
         print(f"The file {file_name} does not exist.")
         return None
 
-def compare_and_replace_date(file_name='/home/pi/v2_prototype/data.txt'):
+def compare_and_replace_date(file_name="/home/pi/v2_prototype/data_send.txt"):
     current_date = datetime.datetime.now()
     previous_date = read_date_from_file(file_name)
     
@@ -261,39 +262,54 @@ def compare_and_replace_date(file_name='/home/pi/v2_prototype/data.txt'):
 
 def send_report(client, textFilePath):
 
-    data = client.data.find({'variable': "email"}, qty=1)
-    last_value = data[0]["value"]
-    print(last_value)
+    filter = {
+    'variable': 'email',
+    'end_date': '2023-12-25 23:33:22',
+    'start_date': '2014-12-20 23:33:22'
+    }
+
+    result = client.find(filter)
+    valor_result = result.get('result')
+
+    email_to_send = []
+    for i in range(len(valor_result)):
+        email_value = valor_result[i].get('value') if valor_result else None
+        #print(email_value)
+        email_to_send.append(email_value)
+
+    #print(email_to_send)
+    email_to_send = np.unique(email_to_send)
 
     bodyEmail = \
         '<h1>Relatório das medições:  </h1>' + \
         '<p> </p>' + \
         '<pre>' + open(textFilePath).read() + '</pre>'
 
-    msg = MIMEMultipart()
-
     current_date = datetime.datetime.now()
     str_date = current_date.strftime("%Y-%m-%d")
-
     name_email = "RELATÓRIO - PROTÓTIPO - " + str_date
-    msg['Subject'] = name_email
-    msg['From'] = credentials.email
-    msg['To'] = last_value
-    password = credentials.passwordAPI
+    for i in range(len(email_to_send)):
+        msg = MIMEMultipart()
 
-    body = MIMEText(bodyEmail, 'html')
-    msg.attach(body)
+        msg['Subject'] = name_email
+        msg['From'] = credentials.email
 
-    with open(textFilePath, 'rb') as text_file:
-        attachment = MIMEBase('application', 'octet-stream')
-        attachment.set_payload(text_file.read())
-        encoders.encode_base64(attachment)
-        attachment.add_header('Content-Disposition', 'attachment', filename=textFilePath)
-        msg.attach(attachment)
+        msg['To'] = email_to_send[i]
+        password = credentials.passwordAPI
 
-    s = smtplib.SMTP('smtp.gmail.com: 587')
-    s.starttls()
-    s.login(msg['From'], password)
-    s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
+        body = MIMEText(bodyEmail, 'html')
+        msg.attach(body)
 
-    print('Email enviado')
+        with open(textFilePath, 'rb') as text_file:
+            attachment = MIMEBase('application', 'octet-stream')
+            attachment.set_payload(text_file.read())
+            encoders.encode_base64(attachment)
+            attachment.add_header('Content-Disposition', 'attachment', filename=textFilePath)
+            msg.attach(attachment)
+
+        s = smtplib.SMTP('smtp.gmail.com: 587')
+        s.starttls()
+        s.login(msg['From'], password)
+        s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
+
+        print('Email enviado para ' + email_to_send[i])

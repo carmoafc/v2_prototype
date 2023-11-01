@@ -89,14 +89,14 @@ while i <= 0:
 
     current_date = datetime.datetime.now()
     str_date = current_date.strftime("%Y-%m-%d %H:%M")
-    if not result:
-        with open(filename_send, "a") as file:
-            file.write(str_date + " - " + index + "\n")
+    if result:
+        with open(filename_send, "w") as file:
+            file.write("\n" + str_date + " - " + index + "\n")
     else:
         raspFunctions.send_report(client, filename_send)
 
-        with open(filename_send, "w") as file:
-            file.write(str_date + " - " + index + "\n")
+        with open(filename_send, "a") as file:
+            file.write("\n" + str_date + " - " + index + "\n")
 
     i = i + 1
 
