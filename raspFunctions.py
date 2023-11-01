@@ -230,11 +230,11 @@ def download_git():
     except requests.exceptions.RequestException as e:
         print(f"Erro ao baixar o arquivo: {e}")
 
-def write_date_to_file(date, file_name="/home/pi/v2_prototype/data_send.txt"):
+def write_date_to_file(date, file_name="/home/pi/v2_prototype/data.txt"):
     with open(file_name, 'w') as file:
         file.write(date)
 
-def read_date_from_file(file_name="/home/pi/v2_prototype/data_send.txt"):
+def read_date_from_file(file_name="/home/pi/v2_prototype/data.txt"):
     if os.path.exists(file_name):
         with open(file_name, 'r') as file:
             date_str = file.read().strip()
@@ -248,11 +248,11 @@ def read_date_from_file(file_name="/home/pi/v2_prototype/data_send.txt"):
         print(f"The file {file_name} does not exist.")
         return None
 
-def compare_and_replace_date(file_name="/home/pi/v2_prototype/data_send.txt"):
+def compare_and_replace_date(file_name="/home/pi/v2_prototype/data.txt"):
     current_date = datetime.datetime.now()
     previous_date = read_date_from_file(file_name)
     
-    if previous_date is None or current_date > previous_date:
+    if previous_date is None or current_date > previous_date + datetime.timedelta(days=15):
         write_date_to_file(current_date.strftime('%Y-%m-%d'), file_name)
         print("Date replaced successfully.")
         return True
