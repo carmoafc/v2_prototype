@@ -9,6 +9,7 @@ from email import encoders
 import credentials
 import numpy as np
 import boto3
+import uuid
 
 def takePhotoFCN(camera):
     import time
@@ -172,6 +173,7 @@ def runModelFCN(client, camera, xCut, yCut, point):
     client.insert(data)
 
     time.sleep(2)
+    sendToAws(index)
     return typeWater[index]
 
 def reboot():
@@ -317,16 +319,19 @@ def send_report(client, textFilePath):
 
     return None
 
-def sendToAws():
+def sendToAws(value):
+    typeWater = ['Limpa', 'SemAgua', 'Suja']
     aws_access_key_id = credentials.aws_access_key_id
     aws_secret_access_key = credentials.aws_secret_access_key
     aws_bucket_name = credentials.aws_buket_name
+
+    guid_uuid4 = uuid.uuid4()
 
     # Nome do arquivo local que você deseja enviar
     local_file_path = '/home/pi/v2_prototype/image.jpg'
 
     # Nome do arquivo no bucket da AWS
-    s3_file_key = 'a'
+    s3_file_key =  str(guid_uuid4) + '/' + typeWater[value] + '.jpg'
 
     # Cria uma instância do cliente S3
     s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
