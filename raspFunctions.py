@@ -10,6 +10,7 @@ import credentials
 import numpy as np
 import boto3
 import uuid
+import cv2 
 
 def takePhotoFCN(camera):
     import time
@@ -141,6 +142,10 @@ def runModelFCN(client, camera, xCut, yCut, point):
 
     camera.capture(filename)
 
+    img = cv2.imread(filename)
+    img_cw_180 = cv2.rotate(img, cv2.ROTATE_180)
+    cv2.imwrite(filename, img_cw_180)
+
     img = Image.open(filename).convert('RGB') #read the image and convert it to RGB format
     img = img.resize(size) #resize the image to 224x224
     img = np.array(img) # convert the image in an array
@@ -173,7 +178,15 @@ def runModelFCN(client, camera, xCut, yCut, point):
     client.insert(data)
 
     time.sleep(2)
-    sendToAws(index)
+    url = sendToAws(index)
+
+    data2 = {
+                'variable': 'url',                                                  
+                'value'   : url,                                                                    
+    }
+
+    client.insert(data2)
+
     return typeWater[index]
 
 def reboot():
@@ -340,4 +353,6 @@ def sendToAws(value):
     s3.upload_file(local_file_path, aws_bucket_name, s3_file_key)
 
     print(f'A imagem foi enviada para o bucket {aws_bucket_name} com sucesso.')
-    return None
+
+    url =  aws_bucket_name + ".s3.amazonaws.com/" + s3_file_key
+    return url
