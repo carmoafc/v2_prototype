@@ -1,26 +1,30 @@
 import os
-import os
+import time
 import datetime
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
+from email.mime.image import MIMEImage
 from email import encoders
 import credentials
 import numpy as np
 import boto3
 import uuid
 import cv2 
+from PIL import Image
+from tflite_runtime.interpreter import Interpreter
+from picamera import PiCamera
+import subprocess
+import requests
 
 def takePhotoFCN(camera):
-    import time
 
     time.sleep(5)
     camera.capture('/home/pi/v2_prototype/image.jpg')
     return None
 
 def takeVideoFCN(camera):
-    import time
 
     camera.start_recording('/home/pi/v2_prototype/desiredfilename.h264')
     time.sleep(5)
@@ -28,15 +32,13 @@ def takeVideoFCN(camera):
     return None
 
 def updateModelFCN():
-    import os
+
     os.system('rm -f /home/pi/v2_prototype/Model-_1.tflite')
     os.system('wget https://github.com/clodoaldocodes/v2_prototype/raw/main/Model-_1.tflite -P /home/pi/v2_prototype')
     return None
 
 def calibrateFCN():
-    import cv2
-    import os
-    
+
     os.system('rm -f /home/pi/v2_prototype/drive_img.png')
     os.system('wget https://github.com/clodoaldocodes/v2_prototype/raw/main/drive_img.png -P /home/pi/v2_prototype')
 
@@ -63,14 +65,6 @@ def on_message(message):
     return None
 
 def sendEmail(value, point):  
-    import os
-    import smtplib
-    from email.mime.multipart import MIMEMultipart
-    from email.mime.text import MIMEText
-    from email.mime.image import MIMEImage
-    from PIL import Image
-    import credentials
-
     typeWater = ['Limpa', 'SemAgua', 'Suja']
     imagePath = '/home/pi/v2_prototype/'  
     filename = 'image.jpg' 
@@ -121,11 +115,6 @@ def sendEmail(value, point):
     return None
 
 def runModelFCN(client, camera, xCut, yCut, point):
-    from tflite_runtime.interpreter import Interpreter
-    from PIL import Image
-    import numpy as np
-    import time
-    from picamera import PiCamera
 
     tflite_model_path = '/home/pi/v2_prototype/Model-_1.tflite'
     interpreter = Interpreter(tflite_model_path)
@@ -190,12 +179,11 @@ def runModelFCN(client, camera, xCut, yCut, point):
     return typeWater[index]
 
 def reboot():
-    import subprocess
+    
     subprocess.call('sudo reboot', shell=True)
     return None
 
 def obtainTemperature(client):
-    import subprocess
 
     output = subprocess.check_output('/usr/bin/vcgencmd measure_temp', shell=True, text=True, stderr=subprocess.PIPE)
     temperature_str = output.strip().split("=")[1]
@@ -211,11 +199,10 @@ def obtainTemperature(client):
     return None
 
 def sendMensage(client, channel, value):
+
     client.virtualWrite(channel, value)
 
 def download_git():
-    import os
-    import requests
 
     # Caminho local do arquivo
     caminho_local = '/home/pi/v2_prototype/Model-_1.tflite'
