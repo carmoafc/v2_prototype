@@ -258,7 +258,7 @@ def compare_and_replace_date(file_name="/home/pi/v2_prototype/data.txt"):
     current_date = datetime.datetime.now()
     previous_date = read_date_from_file(file_name)
     
-    if previous_date is None or current_date > previous_date + datetime.timedelta(days=15):
+    if previous_date is None or current_date > previous_date + datetime.timedelta(days=10):
         write_date_to_file(current_date.strftime('%Y-%m-%d'), file_name)
         print("Date replaced successfully.")
         return True
@@ -275,7 +275,7 @@ def send_report(client, textFilePath):
         '<pre>' + open(textFilePath).read() + '</pre>'
 
     current_date = datetime.datetime.now()
-    str_date = current_date.strftime("%Y-%m-%d")
+    str_date = current_date.strftime("%Y_%m_%d")
     name_email = "RELATÓRIO - PROTÓTIPO - " + str_date
     for i in range(len(email_to_send)):
         msg = MIMEMultipart()
@@ -289,11 +289,12 @@ def send_report(client, textFilePath):
         body = MIMEText(bodyEmail, 'html')
         msg.attach(body)
 
+        name_txt = "report_" + str_date + ".txt"
         with open(textFilePath, 'rb') as text_file:
             attachment = MIMEBase('application', 'octet-stream')
             attachment.set_payload(text_file.read())
             encoders.encode_base64(attachment)
-            attachment.add_header('Content-Disposition', 'attachment', filename=textFilePath)
+            attachment.add_header('Content-Disposition', 'attachment', filename=name_txt)
             msg.attach(attachment)
 
         s = smtplib.SMTP('smtp.gmail.com: 587')

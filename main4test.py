@@ -88,15 +88,15 @@ while i <= 0:
     result = raspFunctions.compare_and_replace_date()
 
     current_date = datetime.datetime.now()
-    str_date = current_date.strftime("%Y-%m-%d %H:%M")
+    str_date = current_date.strftime("%d-%m-%Y %H:%M")
     if not result:
         with open(filename_send, "a") as file:
-            file.write(str_date + " - " + index + "\n")
+            file.write(str_date + ", " + index + "\n")
     else:
         raspFunctions.send_report(client, filename_send)
 
         with open(filename_send, "w") as file:
-            file.write(str_date + " - " + index + "\n")
+            file.write("Data completa, Classe\n" + str_date + ", " + index + "\n")
 
     i = i + 1
 
