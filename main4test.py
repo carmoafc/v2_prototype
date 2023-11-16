@@ -47,9 +47,13 @@ while checkInternetRequests() == False:  # Wait for internet connection
 
 # Tago.io setup
 client = tago.Device(credentials.tagoToken)
+raspFunctions.send_log(client, option=0)
+
 filename = "/home/pi/v2_prototype/number.txt"
 filename_send = "/home/pi/v2_prototype/data_send.txt"
 GPIO.output(20, GPIO.LOW)
+
+raspFunctions.send_log(client, option=1)
 
 while i <= 0:
     if GPIO.input(21) == False:
@@ -71,19 +75,15 @@ while i <= 0:
             battery = 100-((0*100)/1600)
             #print("B")
 
+            raspFunctions.send_log(client, option=6)
             raspFunctions.download_git()
-    data = {
-        "variable": "bateria",
-        "value": str(battery),
-        "unit": "%"
-    }
 
-    client.insert(data)
-
-    raspFunctions.obtainTemperature(client)
+    temperature_float = raspFunctions.obtainTemperature()
+    raspFunctions.send_log(client, option=2)
     camera = PiCamera()
     index = raspFunctions.runModelFCN(client, camera, xCut, yCut, point)
     camera.close()
+    raspFunctions.send_log(client, option=3)
 
     result = raspFunctions.compare_and_replace_date()
 
@@ -94,13 +94,17 @@ while i <= 0:
             file.write(str_date + ", " + index + "\n")
     else:
         raspFunctions.send_report(client, filename_send)
+        raspFunctions.send_log(client, option=7)
 
         with open(filename_send, "w") as file:
             file.write("Data completa, Classe\n" + str_date + ", " + index + "\n")
 
     i = i + 1
 
+    raspFunctions.send_log_monitoring(client, index, battery, temperature_float)
+
 #GPIO.output(20, GPIO.HIGH)
+raspFunctions.send_log(client, option=5)
 time.sleep(1)
 
 #os.system("sudo shutdown -h now")

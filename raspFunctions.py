@@ -162,12 +162,12 @@ def runModelFCN(client, camera, xCut, yCut, point):
     
     print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Predict: ' + typeWater[index])
 
-    data = {
+    '''data = {
             'variable': 'estadoagua',                                                  
             'value'   : typeWater[index],                                                                    
     }
 
-    client.insert(data)
+    client.insert(data)'''
 
     time.sleep(2)
     url = sendToAws(index)
@@ -186,20 +186,13 @@ def reboot():
     subprocess.call('sudo reboot', shell=True)
     return None
 
-def obtainTemperature(client):
+def obtainTemperature():
 
     output = subprocess.check_output('/usr/bin/vcgencmd measure_temp', shell=True, text=True, stderr=subprocess.PIPE)
     temperature_str = output.strip().split("=")[1]
     temperature_float = float(temperature_str.split("'")[0])
-    data = {
-            'variable': 'temperatura',                                                  
-            'value'   : str(temperature_float),
-            'unit'    : 'ºC'                                                                    
-    }
 
-    client.insert(data)
-
-    return None
+    return temperature_float
 
 def sendMensage(client, channel, value):
 
@@ -351,3 +344,61 @@ def choose_emails_send(client):
     email_to_send = np.unique(email_to_send)
 
     return email_to_send
+
+def send_log(client, option):
+    current_date = datetime.datetime.now()
+    str_date = current_date.strftime("%d-%m-%Y %H:%M")
+
+    if option==1:
+        msg = "Dispositivo conectado"
+    if option==2:
+        msg = "Capturando imagem para processamento"
+    if option==3:
+        msg = "Processamento concluído"
+    if option==4:
+        msg = "Processo finalizado"
+    if option==5:
+        msg = "Unidade de processamento desligando"
+    if option==6:
+        msg = "Atualizando modelo de IA"
+    if option==7:
+        msg = "Relatório enviado nos e-mails"
+    if option==0:
+        msg = "Unidade de processamento iniciando"
+    
+    data = [
+        {"variable": "log",
+        "value": msg},
+        {"variable": "date",
+        "value": str_date}
+    ]
+    client.insert(data)
+    return None
+
+def send_log_monitoring(client, index, battery, temperature):
+    current_date = datetime.datetime.now()
+    str_date = current_date.strftime("%d-%m-%Y %H:%M")
+    
+    data = [
+    {
+        "variable": "bateria",
+        "value": str(round(battery,1)),
+        "unit": "%"
+    },
+    {
+        "variable": "temperatura",
+        "value": str(temperature),
+        "unit": "ºC"
+    },
+    {
+        "variable": "date_monitoring",
+        "value": str_date,
+    },
+    {
+        "variable": "estadoagua",
+        "value": index,
+    }
+    ]
+
+    client.insert(data)
+    return None
