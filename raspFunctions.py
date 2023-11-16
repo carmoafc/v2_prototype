@@ -64,10 +64,12 @@ def on_message(message):
     print("message received: " + str(message))
     return None
 
-def sendEmail(value, point):  
+def sendEmail(client, value, point):  
     typeWater = ['Limpa', 'SemAgua', 'Suja']
     imagePath = '/home/pi/v2_prototype/'  
     filename = 'image.jpg' 
+
+    email_to_send = choose_emails_send(client)
 
     imagePath = os.path.join(imagePath, filename)
 
@@ -89,29 +91,30 @@ def sendEmail(value, point):
         '<p>Imagem que foi obtida da região observada: </p>' + \
         '<img src="cid:image1">'  
 
-    msg = MIMEMultipart()
-    msg['Subject'] = "ALERTA DO PROTÓTIPO!!"
-    msg['From'] = credentials.email
-    msg['To'] = credentials.emailTo
-    password = credentials.passwordAPI
+    for i in range(len(email_to_send)):
+        msg = MIMEMultipart()
+        msg['Subject'] = "ALERTA DO PROTÓTIPO!!"
+        msg['From'] = credentials.email
+        msg['To'] = email_to_send[i]
+        password = credentials.passwordAPI
 
-    body = MIMEText(bodyEmail, 'html')
-    msg.attach(body)
+        body = MIMEText(bodyEmail, 'html')
+        msg.attach(body)
 
-    with open(tempImagePath, 'rb') as image_file:
-        image_data = image_file.read()
-    imagePart = MIMEImage(image_data, name=os.path.basename(imagePath))
-    imagePart.add_header('Content-ID', '<image1>')
-    imagePart.add_header("Content-Disposition", "inline", filename=os.path.basename(imagePath))
-    msg.attach(imagePart)
+        with open(tempImagePath, 'rb') as image_file:
+            image_data = image_file.read()
+        imagePart = MIMEImage(image_data, name=os.path.basename(imagePath))
+        imagePart.add_header('Content-ID', '<image1>')
+        imagePart.add_header("Content-Disposition", "inline", filename=os.path.basename(imagePath))
+        msg.attach(imagePart)
 
-    s = smtplib.SMTP('smtp.gmail.com: 587')
-    s.starttls()
-    s.login(msg['From'], password)
-    s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
+        s = smtplib.SMTP('smtp.gmail.com: 587')
+        s.starttls()
+        s.login(msg['From'], password)
+        s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
 
+        print('Email enviado para ' + email_to_send[i])
     os.remove(tempImagePath)
-    print('Email enviado')
     return None
 
 def runModelFCN(client, camera, xCut, yCut, point):
@@ -154,8 +157,8 @@ def runModelFCN(client, camera, xCut, yCut, point):
     # t2=time.time() 
     predictions = interpreter.get_tensor(output_details[0]['index'])[0]
     index = np.argmax(predictions)  
-    if int(index) == 2:
-        sendEmail(int(index), point)    
+    if int(index) != 2:
+        sendEmail(client, int(index), point)    
     
     print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Predict: ' + typeWater[index])
 
@@ -264,24 +267,7 @@ def compare_and_replace_date(file_name="/home/pi/v2_prototype/data.txt"):
         return False
 
 def send_report(client, textFilePath):
-
-    filter = {
-    'variable': 'email',
-    'end_date': '2023-12-25 23:33:22',
-    'start_date': '2014-12-20 23:33:22'
-    }
-
-    result = client.find(filter)
-    valor_result = result.get('result')
-
-    email_to_send = []
-    for i in range(len(valor_result)):
-        email_value = valor_result[i].get('value') if valor_result else None
-        #print(email_value)
-        email_to_send.append(email_value)
-
-    #print(email_to_send)
-    email_to_send = np.unique(email_to_send)
+    email_to_send = choose_emails_send(client)
 
     bodyEmail = \
         '<h1>Relatório das medições:  </h1>' + \
@@ -343,3 +329,24 @@ def sendToAws(value):
 
     url =  aws_bucket_name + ".s3.amazonaws.com/" + s3_file_key
     return url
+
+def choose_emails_send(client):
+    filter = {
+    'variable': 'email',
+    'end_date': '2023-12-25 23:33:22',
+    'start_date': '2014-12-20 23:33:22'
+    }
+
+    result = client.find(filter)
+    valor_result = result.get('result')
+
+    email_to_send = []
+    for i in range(len(valor_result)):
+        email_value = valor_result[i].get('value') if valor_result else None
+        #print(email_value)
+        email_to_send.append(email_value)
+
+    #print(email_to_send)
+    email_to_send = np.unique(email_to_send)
+
+    return email_to_send
