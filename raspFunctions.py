@@ -157,7 +157,7 @@ def runModelFCN(client, camera, xCut, yCut, point):
     # t2=time.time() 
     predictions = interpreter.get_tensor(output_details[0]['index'])[0]
     index = np.argmax(predictions)  
-    if int(index) != 2:
+    if int(index) == 2:
         sendEmail(client, int(index), point)    
     
     print(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-7]) + ' - Predict: ' + typeWater[index])
@@ -345,7 +345,7 @@ def choose_emails_send(client):
 
     return email_to_send
 
-def send_log(client, option):
+def send_log(client, option, msg_personalize=None):
     current_date = datetime.datetime.now()
     str_date = current_date.strftime("%d-%m-%Y %H:%M")
 
@@ -363,6 +363,8 @@ def send_log(client, option):
         msg = "Atualizando modelo de IA"
     if option==7:
         msg = "Relatório enviado nos e-mails"
+    if option==8:
+        msg = "IP: " + msg_personalize
     if option==0:
         msg = "Unidade de processamento iniciando"
     
@@ -401,4 +403,29 @@ def send_log_monitoring(client, index, battery, temperature):
     ]
 
     client.insert(data)
+    return None
+
+def conect_vpn():
+    # Command to start OpenVPN in daemon mode
+    bash_command = "sudo openvpn --config /home/pi/v2_prototype/vpn_inspectral.ovpn --daemon"
+    process = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    output, error = process.communicate()
+    print("Command output:", output)
+    print("Return code:", process.returncode)
+
+    # Command to get the IP address of the host
+    bash_command = "hostname -I"
+    process = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    output, error = process.communicate()
+    print("Command output:", output)
+    print("Return code:", process.returncode)
+    return output
+
+def disconect_vpn():
+    bash_command = "sudo pkill openvpn"
+    subprocess.run(bash_command, shell=True)
+
+    bash_command = "sudo ip delete link tun0"
+    subprocess.run(bash_command, shell=True)
+
     return None
