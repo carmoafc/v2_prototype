@@ -227,7 +227,7 @@ def download_git(client):
             print(f"Arquivo baixado com sucesso para: {caminho_local}")
 
     except requests.exceptions.RequestException as e:
-        msg = "Erro ao baixar o arquivo"
+        msg = "Erro ao baixar o modelo do Git"
         print(f"{msg}: {e}")
         send_log(client, option=8, msg_personalize=msg)
 
