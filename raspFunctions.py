@@ -198,7 +198,7 @@ def sendMensage(client, channel, value):
 
     client.virtualWrite(channel, value)
 
-def download_git():
+def download_git(client):
 
     # Caminho local do arquivo
     caminho_local = '/home/pi/v2_prototype/Model-_1.tflite'
@@ -227,7 +227,9 @@ def download_git():
             print(f"Arquivo baixado com sucesso para: {caminho_local}")
 
     except requests.exceptions.RequestException as e:
-        print(f"Erro ao baixar o arquivo: {e}")
+        msg = "Erro ao baixar o arquivo"
+        print(f"{msg}: {e}")
+        send_log(client, option=8, msg_personalize=msg)
 
 def write_date_to_file(date, file_name="/home/pi/v2_prototype/data.txt"):
     with open(file_name, 'w') as file:
