@@ -103,7 +103,7 @@ while i <= 0:
 
     raspFunctions.send_log_monitoring(client, index, battery, temperature_float)
 
-#GPIO.output(20, GPIO.HIGH)
+GPIO.output(20, GPIO.HIGH)
 raspFunctions.send_log(client, option=5)
 time.sleep(1)
 
