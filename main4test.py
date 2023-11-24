@@ -30,7 +30,7 @@ timeToStart = 0
 timeToMeasure = 2
 
 time.sleep(timeToStart)
-point = "alpha"
+point = "beta"
 shouldStop = True
 
 time_begin = time.time()
@@ -49,6 +49,9 @@ while checkInternetRequests() == False:  # Wait for internet connection
 client = tago.Device(credentials.tagoToken)
 raspFunctions.send_log(client, option=0)
 
+output_msg = raspFunctions.conect_vpn()
+raspFunctions.send_log(client, option=8, msg_personalize=output_msg)
+
 filename = "/home/pi/v2_prototype/number.txt"
 filename_send = "/home/pi/v2_prototype/data_send.txt"
 GPIO.output(20, GPIO.LOW)
@@ -56,7 +59,7 @@ GPIO.output(20, GPIO.LOW)
 raspFunctions.send_log(client, option=1)
 
 while i <= 0:
-    if GPIO.input(21) == False:
+    if GPIO.input(21) == True:
         #raspFunctions.updateModelFCN()
         with open(filename, "r") as file:
             number = int(file.read())
@@ -69,14 +72,15 @@ while i <= 0:
 
             #print("A")
 
+        raspFunctions.send_log(client, option=6)
+        raspFunctions.download_git()
+
     else:
         with open(filename, "w") as file:
             file.write(str(0))
             battery = 100-((0*100)/1600)
             #print("B")
 
-            raspFunctions.send_log(client, option=6)
-            raspFunctions.download_git()
 
     temperature_float = raspFunctions.obtainTemperature()
     raspFunctions.send_log(client, option=2)
@@ -107,5 +111,6 @@ GPIO.output(20, GPIO.HIGH)
 raspFunctions.send_log(client, option=5)
 time.sleep(1)
 
+raspFunctions.disconect_vpn()
 #os.system("sudo shutdown -h now")
 GPIO.cleanup()
