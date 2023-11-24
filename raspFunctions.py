@@ -410,15 +410,15 @@ def conect_vpn():
     bash_command = "sudo openvpn --config /home/pi/v2_prototype/vpn_inspectral.ovpn --daemon"
     process = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     output, error = process.communicate()
-    print("Command output:", output)
-    print("Return code:", process.returncode)
+    #print("Command output:", output)
+    #print("Return code:", process.returncode)
 
     # Command to get the IP address of the host
     bash_command = "hostname -I"
     process = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     output, error = process.communicate()
-    print("Command output:", output)
-    print("Return code:", process.returncode)
+    #print("Command output:", output)
+    #print("Return code:", process.returncode)
     return output
 
 def disconect_vpn():
