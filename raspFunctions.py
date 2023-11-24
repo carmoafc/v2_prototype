@@ -407,7 +407,7 @@ def send_log_monitoring(client, index, battery, temperature):
 
 def conect_vpn():
     # Command to start OpenVPN in daemon mode
-    bash_command = "sudo openvpn --config /home/pi/v2_prototype/vpn_inspectral.ovpn --daemon"
+    bash_command = "sudo openvpn --config vpn_inspectral_vpn.ovpn --daemon"
     process = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     output, error = process.communicate()
     #print("Command output:", output)
