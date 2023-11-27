@@ -1,11 +1,2 @@
 Data completa, Classe
-16-11-2023 16:19, SemAgua
-16-11-2023 16:23, SemAgua
-16-11-2023 16:24, SemAgua
-16-11-2023 16:25, SemAgua
-16-11-2023 16:26, SemAgua
-16-11-2023 16:58, SemAgua
-24-11-2023 14:12, SemAgua
-24-11-2023 14:14, Suja
-24-11-2023 14:14, Limpa
-24-11-2023 14:15, SemAgua
+27-11-2023 15:37, SemAgua

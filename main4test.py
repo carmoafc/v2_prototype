@@ -30,7 +30,7 @@ timeToStart = 0
 timeToMeasure = 2
 
 time.sleep(timeToStart)
-point = "beta"
+point = "alpha"
 shouldStop = True
 
 time_begin = time.time()
