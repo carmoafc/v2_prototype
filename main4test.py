@@ -73,7 +73,7 @@ while i <= 0:
             #print("A")
 
         raspFunctions.send_log(client, option=6)
-        raspFunctions.download_git()
+        raspFunctions.download_git(client)
 
     else:
         with open(filename, "w") as file:
